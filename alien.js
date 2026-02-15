@@ -96,6 +96,11 @@ function updateSlide() {
         if (indicator) indicator.innerText = `${targetIndex + 1} / ${slides.length}`;
         if (window.onSlideChange) window.onSlideChange(targetIndex);
 
+        // SYNC CINEMATICS (Rocket/Astronaut visibility)
+        if (window.updateCinematicState) {
+            window.updateCinematicState(targetIndex);
+        }
+
     }, delay);
 }
 
@@ -149,11 +154,6 @@ document.addEventListener('click', (e) => {
 // -- Navigation Exports --
 window.nextSlide = function () {
     if (currentSlideIndex < slides.length - 1) {
-        // CINEMATIC TRIGGER
-        if (window.triggerRocket) window.triggerRocket();
-
-        // Slight delay to sync with rocket? 
-        // No, let it fly AS the slide warps
         currentSlideIndex++;
         updateSlide();
     }

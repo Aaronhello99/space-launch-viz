@@ -187,18 +187,16 @@ body {
 
 .fullscreen-chart {
     width: 90%;
-    height: 70%;
-    /* Reduced to give more space for text in fullscreen */
+    height: 65%;
+    /* Reduced further to ensure clearance for Mission Control */
     max-width: 1400px;
-    /* Cap width for extreme widescreen */
-    max-height: 75vh;
-    /* Responsive height cap */
+    max-height: 70vh;
     border-radius: 12px;
     background: rgba(0, 0, 0, 0.2);
     box-shadow: 0 0 50px rgba(0, 0, 0, 0.5);
     border: 1px solid rgba(255, 255, 255, 0.05);
     pointer-events: auto;
-    margin: 0 auto;
+    margin: 20px auto;
 }
 
 /* Intro */

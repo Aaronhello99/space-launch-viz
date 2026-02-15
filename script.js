@@ -43,6 +43,16 @@ function processData(data) {
 }
 
 // -- 2. Central Controller (Called by alien.js) --
+window.addEventListener('resize', () => {
+    const containers = ['chart1', 'chart2', 'chart3', 'chart4', 'chart5'];
+    containers.forEach(id => {
+        const el = document.getElementById(id);
+        if (el && el.innerHTML !== "") {
+            Plotly.Plots.resize(el);
+        }
+    });
+});
+
 window.onSlideChange = function (index) {
     console.log(`[Script] Slide ${index} Activation`);
 

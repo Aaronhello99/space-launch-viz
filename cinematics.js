@@ -84,7 +84,7 @@ class Rocket {
         this.thrust = 0;
         this.fuel = 1000;
 
-        this.state = 'IDLE'; // IDLE, LAUNCH, ORBIT, LANDING, LANDED
+        this.state = 'IDLE'; // IDLE, LAUNCH, ORBIT, LANDING, LANDED, HIDDEN
         this.particles = [];
     }
 
@@ -176,7 +176,7 @@ class Rocket {
 
     update() {
         this.control();
-        if (this.state !== 'ORBIT' && this.state !== 'LANDED') this.applyPhysics();
+        if (this.state !== 'ORBIT' && this.state !== 'LANDED' && this.state !== 'HIDDEN') this.applyPhysics();
 
         // Update particles
         for (let i = this.particles.length - 1; i >= 0; i--) {
@@ -189,7 +189,7 @@ class Rocket {
         // Draw Particles first
         for (let p of this.particles) p.draw(ctx);
 
-        if (this.state === 'ORBIT') return;
+        if (this.state === 'ORBIT' || this.state === 'HIDDEN') return;
 
         ctx.save();
         ctx.translate(this.x, this.y);
@@ -266,5 +266,7 @@ window.updateCinematicState = function (slideIndex) {
             rocket.state = 'LANDING';
         }
     }
-    // else keep standard physics?
+    else {
+        rocket.state = 'HIDDEN';
+    }
 };

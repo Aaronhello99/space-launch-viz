@@ -1,0 +1,279 @@
+/* -- AEROSPACE DASHBOARD THEME (INSANE ANIMATIONS) -- */
+:root {
+    --bg-color: #0b0d17;
+    --panel-bg: rgba(13, 17, 34, 0.95);
+    --accent-color: #00f2ff;
+    --secondary-accent: #ff0055;
+    --text-primary: #e0e6ed;
+    --text-secondary: #94a3b8;
+    --accent-glow: rgba(0, 242, 255, 0.1);
+    --border-color: rgba(255, 255, 255, 0.1);
+}
+
+body {
+    background-color: var(--bg-color);
+    color: var(--text-primary);
+    font-family: 'Roboto', sans-serif;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    height: 100vh;
+    width: 100vw;
+    cursor: crosshair;
+    user-select: none;
+    /* 3D Stage */
+    perspective: 1000px;
+}
+
+#starfield {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    pointer-events: none;
+}
+
+#slides-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: calc(100vh - 120px);
+    z-index: 10;
+    transform-style: preserve-3d;
+}
+
+/* -- SLIDE TRANSITIONS -- */
+.slide {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    padding: 40px;
+    box-sizing: border-box;
+
+    /* Default Hidden State */
+    opacity: 0;
+    pointer-events: none;
+    transform: translateZ(-200px) scale(0.8);
+    filter: blur(10px);
+    transition: none;
+    /* Controlled by animation */
+}
+
+/* Active State (Static) */
+.slide.active {
+    opacity: 1;
+    pointer-events: all;
+    transform: translateZ(0) scale(1);
+    filter: blur(0);
+    z-index: 10;
+}
+
+/* WARP OUT ANIMATION */
+@keyframes warpOut {
+    0% {
+        opacity: 1;
+        transform: translateZ(0) scale(1) rotateX(0deg);
+        filter: blur(0);
+    }
+
+    100% {
+        opacity: 0;
+        transform: translateZ(500px) scale(2) rotateX(10deg);
+        filter: blur(20px);
+    }
+
+    /* Fly AT camera */
+}
+
+/* WARP IN ANIMATION */
+@keyframes warpIn {
+    0% {
+        opacity: 0;
+        transform: translateZ(-1000px) scale(0.2) rotateX(-20deg);
+        filter: blur(20px);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateZ(0) scale(1) rotateX(0deg);
+        filter: blur(0);
+    }
+}
+
+.slide.animate-out {
+    animation: warpOut 0.8s cubic-bezier(0.7, 0, 1, 1) forwards;
+    z-index: 20;
+    /* On top to fly through screen */
+}
+
+.slide.animate-in {
+    animation: warpIn 0.8s cubic-bezier(0.1, 0.4, 0.2, 1) forwards;
+    z-index: 10;
+}
+
+/* -- REST OF UI -- */
+#narrator-area {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 120px;
+    background: var(--panel-bg);
+    border-top: 1px solid var(--accent-color);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    padding: 0 40px;
+    box-shadow: 0 -5px 30px rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(10px);
+}
+
+.dashboard-status {
+    width: 200px;
+    border-right: 1px solid var(--border-color);
+    height: 80%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    margin-right: 40px;
+}
+
+.status-label {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.8rem;
+    color: var(--secondary-accent);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 5px;
+}
+
+.status-value {
+    font-family: 'Roboto Mono', monospace;
+    font-size: 1.2rem;
+    color: var(--accent-color);
+}
+
+.alien-dialogue-box {
+    flex-grow: 1;
+    color: var(--text-primary);
+}
+
+#alien-title {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1.1rem;
+    color: var(--accent-color);
+    margin: 0 0 5px 0;
+    text-transform: uppercase;
+}
+
+#alien-message {
+    font-family: 'Roboto', sans-serif;
+    font-size: 1rem;
+    line-height: 1.5;
+    color: var(--text-secondary);
+    margin: 0;
+    max-width: 800px;
+}
+
+.fullscreen-chart {
+    width: 95%;
+    height: 90%;
+    border-radius: 12px;
+    background: rgba(0, 0, 0, 0.2);
+    box-shadow: 0 0 50px rgba(0, 0, 0, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    pointer-events: auto;
+}
+
+/* Intro */
+.intro-content {
+    text-align: center;
+    z-index: 100;
+}
+
+h1.glitch {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 4rem;
+    margin-bottom: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 5px;
+    color: #fff;
+    text-shadow: 0 0 20px var(--accent-glow);
+}
+
+.subtitle {
+    font-family: 'Roboto Mono', monospace;
+    color: var(--accent-color);
+    font-size: 1.5rem;
+    letter-spacing: 3px;
+    margin-bottom: 3rem;
+}
+
+/* Nav */
+.nav-controls {
+    position: fixed;
+    top: 20px;
+    right: 30px;
+    z-index: 2000;
+    display: flex;
+    gap: 15px;
+    align-items: center;
+}
+
+.nav-btn {
+    background: rgba(0, 0, 0, 0.5);
+    border: 1px solid var(--border-color);
+    color: var(--text-secondary);
+    padding: 8px 15px;
+    border-radius: 4px;
+    cursor: pointer !important;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.9rem;
+    transition: all 0.2s;
+}
+
+.nav-btn:hover {
+    border-color: var(--accent-color);
+    color: var(--accent-color);
+}
+
+.slide-indicator {
+    font-family: 'Roboto Mono', monospace;
+    color: var(--accent-color);
+    font-size: 1.1rem;
+}
+
+.btn {
+    background: transparent;
+    border: 2px solid var(--accent-color);
+    color: var(--accent-color);
+    padding: 15px 40px;
+    font-size: 1.2rem;
+    font-family: 'Orbitron', sans-serif;
+    text-transform: uppercase;
+    cursor: pointer !important;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(5px);
+    position: relative;
+    z-index: 9999;
+    pointer-events: auto;
+}
+
+.btn:hover {
+    background: var(--accent-color);
+    color: #000;
+    box-shadow: 0 0 30px var(--accent-glow);
+}
+
+.btn.large {
+    font-size: 1.5rem;
+    padding: 20px 50px;
+}

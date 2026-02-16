@@ -1,4 +1,4 @@
-// alien.js - Presentation Controller & Narrative System (ANIMATION FIXED)
+// alien.js - Presentation Controller & Narrative System (Race-Condition Fixed)
 
 const slides = document.querySelectorAll('.slide');
 const indicator = document.getElementById('slide-indicator');
@@ -10,6 +10,7 @@ const alienMessage = document.getElementById('alien-message');
 
 let currentSlideIndex = 0;
 let isMinimized = false;
+let isTransitioning = false; // Debounce lock
 
 // -- Narrative Content --
 const slideContent = [
@@ -45,58 +46,49 @@ const slideContent = [
     }
 ];
 
-// -- Slide Management --
+// -- Slide Management (Race-Condition Proof) --
+let transitionTimer = null;
 
 function updateSlide() {
-    // 1. Identify Leaving Slide (Currently Active)
-    const leavingSlide = document.querySelector('.slide.active');
-    const targetIndex = currentSlideIndex;
-
-    if (leavingSlide) {
-        // Trigger Exit Animation
-        leavingSlide.classList.add('animate-out');
-        leavingSlide.classList.remove('active'); // CSS keeps it visible via animate-out
-        leavingSlide.classList.remove('animate-in');
+    // Cancel any in-progress transition
+    if (transitionTimer) {
+        clearTimeout(transitionTimer);
+        transitionTimer = null;
     }
 
-    // 2. Wait for Overlap (500ms) to Warp In next slide
-    // Total animation is 0.8s, so 0.3s overlap
-    const delay = leavingSlide ? 500 : 0;
+    // Immediately clean up ALL slides
+    document.querySelectorAll('.slide').forEach(s => {
+        s.classList.remove('active', 'animate-in', 'animate-out');
+    });
 
-    setTimeout(() => {
-        // Clean up ALL slides to ensure no stragglers
-        document.querySelectorAll('.slide').forEach(s => {
-            if (s.id !== `slide-${targetIndex}`) {
-                s.classList.remove('active');
-                s.classList.remove('animate-in');
-                s.classList.remove('animate-out');
-                // s.style.opacity = 0; // Handled by CSS class default
-            }
-        });
+    const targetIndex = currentSlideIndex;
 
-        // Activate New Slide
-        const enteringSlide = document.getElementById(`slide-${targetIndex}`);
-        if (enteringSlide) {
-            enteringSlide.classList.add('active');
-            enteringSlide.classList.add('animate-in'); // Trigger Entry Animation
-        }
+    // Activate target slide instantly (no animation overlap on rapid clicks)
+    const enteringSlide = document.getElementById(`slide-${targetIndex}`);
+    if (enteringSlide) {
+        enteringSlide.classList.add('active', 'animate-in');
+    }
 
-        // Logic Updates
-        const content = slideContent[targetIndex];
-        if (content) {
-            animateText(content.title, content.text);
-            narratorArea.className = '';
-            narratorArea.classList.add(content.position || 'ufo-pos-default');
+    // Update indicator immediately
+    if (indicator) indicator.innerText = `${targetIndex + 1} / ${slides.length}`;
 
-            if (targetIndex === 2 && window.startViz2Animation) {
-                setTimeout(() => window.startViz2Animation(), 1000);
-            }
-        }
+    // Update narrative
+    const content = slideContent[targetIndex];
+    if (content) {
+        animateText(content.title, content.text);
+        narratorArea.className = '';
+        narratorArea.classList.add(content.position || 'ufo-pos-default');
+    }
 
-        if (indicator) indicator.innerText = `${targetIndex + 1} / ${slides.length}`;
-        if (window.onSlideChange) window.onSlideChange(targetIndex);
+    // Trigger chart render
+    if (window.onSlideChange) window.onSlideChange(targetIndex);
 
-    }, delay);
+    // Lock briefly to prevent spam
+    isTransitioning = true;
+    transitionTimer = setTimeout(() => {
+        isTransitioning = false;
+        transitionTimer = null;
+    }, 300);
 }
 
 // -- Typewriter Effect --
@@ -108,7 +100,7 @@ function animateText(title, text) {
     if (isMinimized) toggleMinimize(false);
 
     let i = 0;
-    const speed = 15;
+    const speed = 12;
     function type() {
         if (i < text.length) {
             alienMessage.innerHTML += text.charAt(i);
@@ -146,6 +138,7 @@ document.addEventListener('click', (e) => {
 
 // -- Navigation Exports --
 window.nextSlide = function () {
+    if (isTransitioning) return; // Block rapid clicks
     if (currentSlideIndex < slides.length - 1) {
         currentSlideIndex++;
         updateSlide();
@@ -153,6 +146,7 @@ window.nextSlide = function () {
 };
 
 window.prevSlide = function () {
+    if (isTransitioning) return; // Block rapid clicks
     if (currentSlideIndex > 0) {
         currentSlideIndex--;
         updateSlide();
@@ -160,6 +154,7 @@ window.prevSlide = function () {
 };
 
 window.jumpToSlide = function (index) {
+    if (isTransitioning) return;
     if (index >= 0 && index < slides.length) {
         currentSlideIndex = index;
         updateSlide();
@@ -173,11 +168,13 @@ document.addEventListener('keydown', (e) => {
 
 // Initial Load
 document.addEventListener('DOMContentLoaded', () => {
-    // Initial State: Slide 0 Active instantly
     const s0 = document.getElementById('slide-0');
     if (s0) {
-        s0.classList.add('active');
-        s0.classList.add('animate-in');
+        s0.classList.add('active', 'animate-in');
     }
-    updateSlide();
+    if (indicator) indicator.innerText = `1 / ${slides.length}`;
+    const content = slideContent[0];
+    if (content) {
+        animateText(content.title, content.text);
+    }
 });

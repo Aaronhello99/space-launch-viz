@@ -3,8 +3,11 @@
 // -- 0. Global Setup --
 const config = {
     responsive: true,
-    displayModeBar: false,
-    scrollZoom: false
+    displayModeBar: true,
+    scrollZoom: true,
+    modeBarButtonsToRemove: ['lasso2d', 'select2d', 'autoScale2d', 'hoverClosestCartesian', 'hoverCompareCartesian', 'toggleSpikelines'],
+    displaylogo: false,
+    modeBarStyle: { bgcolor: 'rgba(0,0,0,0.4)' }
 };
 
 const theme = {
@@ -320,7 +323,7 @@ function renderViz4() {
         values: values,
         labels: labels,
         type: 'pie',
-        hole: 0.4,
+        hole: 0.35,
         marker: {
             colors: colors,
             line: { color: '#0b0d17', width: 2 }
@@ -328,7 +331,7 @@ function renderViz4() {
         textinfo: 'label+percent',
         textposition: 'inside',
         insidetextorientation: 'radial',
-        textfont: { size: 13, color: '#ffffff', family: 'Roboto, sans-serif' },
+        textfont: { size: 14, color: '#ffffff', family: 'Roboto, sans-serif' },
         hovertemplate: '<b>%{label}</b><br>Total Objects Launched: %{value:,}<br>Global Share: %{percent}<extra></extra>',
         pull: [0.02, 0.02, 0.02, 0, 0, 0, 0, 0, 0, 0, 0],
         sort: false
@@ -344,12 +347,12 @@ function renderViz4() {
         font: { color: theme.font, family: 'Roboto, sans-serif' },
         showlegend: false,
         annotations: [{
-            text: `<b>${grandTotal.toLocaleString()}</b><br><span style="font-size:13px;color:#888">Total Objects</span>`,
+            text: `<b>${grandTotal.toLocaleString()}</b><br><span style="font-size:16px;color:#888">Total Objects</span>`,
             x: 0.5, y: 0.5,
-            font: { size: 34, color: theme.accent, family: 'Orbitron, sans-serif' },
+            font: { size: 42, color: theme.accent, family: 'Orbitron, sans-serif' },
             showarrow: false
         }],
-        margin: { t: 70, b: 30, l: 40, r: 40 }
+        margin: { t: 70, b: 20, l: 20, r: 20 }
     };
 
     Plotly.newPlot(container, data, layout, config);

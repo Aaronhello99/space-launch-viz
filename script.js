@@ -1,4 +1,4 @@
-// script.js - Final Verified Business Edition (Round 22 - Treemap Frame Fix)
+// script.js - News Intelligence Reconstruction (Round 41)
 
 // -- 0. Global Setup --
 const config = {
@@ -10,22 +10,25 @@ const config = {
 const theme = {
     font: '#fff',
     accent: '#00f2ff',
-    fontSize: 16,
-    titleSize: 22,
-    axisSize: 14,
-    grid: 'rgba(255,255,255,0.1)',
+    secondary: '#ff0055',
+    fontSize: 18,
+    titleSize: 32,
+    axisSize: 16,
+    grid: 'rgba(255,255,255,0.05)',
     bg: 'rgba(0,0,0,0)',
     tooltipBg: '#0b0d17',
     tooltipText: '#ffffff'
 };
 
-// -- 1. Data Store --
-let store = {}; // Populated from rawData
+// -- 1. Data Store & Processing --
+let store = {};
 
 function processData(data) {
     const processed = {};
     data.forEach(row => {
         const entity = row['Entity'];
+        if (entity === 'World') return; // Handled separately or filtered
+
         const year = parseInt(row['Year']);
         const launches = parseInt(row['Annual number of objects launched into outer space']);
         const code = row['Code'];
@@ -36,31 +39,34 @@ function processData(data) {
         processed[entity].total += launches;
     });
 
-    // Sort arrays
-    for (const entity in processed) {
-        const combined = processed[entity].years.map((y, i) => ({ y: y, l: processed[entity].launches[i] }));
+    // Handle 'World' separately to ensure it exists
+    const worldData = data.filter(r => r.Entity === 'World');
+    processed['World'] = { years: [], launches: [], total: 0 };
+    worldData.forEach(r => {
+        processed['World'].years.push(parseInt(r.Year));
+        processed['World'].launches.push(parseInt(r['Annual number of objects launched into outer space']));
+    });
+
+    // Sort all
+    for (const e in processed) {
+        const combined = processed[e].years.map((y, i) => ({ y, l: processed[e].launches[i] }));
         combined.sort((a, b) => a.y - b.y);
-        processed[entity].years = combined.map(c => c.y);
-        processed[entity].launches = combined.map(c => c.l);
+        processed[e].years = combined.map(c => c.y);
+        processed[e].launches = combined.map(c => c.l);
     }
     return processed;
 }
 
-// -- 2. Central Controller (Called by alien.js) --
+// -- 2. Central Controller --
 window.addEventListener('resize', () => {
     const containers = ['chart1', 'chart2', 'chart3', 'chart4', 'chart5'];
     containers.forEach(id => {
         const el = document.getElementById(id);
-        if (el && el.innerHTML !== "") {
-            Plotly.Plots.resize(el);
-        }
+        if (el && el.innerHTML !== "") Plotly.Plots.resize(el);
     });
 });
 
 window.onSlideChange = function (index) {
-    console.log(`[Script] Slide ${index} Activation`);
-
-    // Trigger specific render logic
     setTimeout(() => {
         switch (index) {
             case 1: renderViz1(); break;
@@ -69,359 +75,233 @@ window.onSlideChange = function (index) {
             case 4: renderViz4(); break;
             case 5: renderViz5(); break;
         }
-    }, 100); // Tiny delay to ensure DOM is ready
+    }, 150);
 };
 
-// -- 3. Visualizations --
+// -- 3. Visualizations (News Style) --
 
-// Viz 1: The Exponential Frontier (Interactive Line Chart)
+// Viz 1: DATA BRIEFING: THE EXPONENTIAL ASCENT OF ORBITAL ASSETS
 function renderViz1() {
     const container = 'chart1';
-    Plotly.purge(container); // Clean slate
-
-    const entities = ['United States', 'Russia', 'China', 'United Kingdom', 'India', 'World'];
-    const colors = { 'United States': '#00f2ff', 'Russia': '#ff0055', 'China': '#ffe600', 'United Kingdom': '#00ff44', 'India': '#ff9900', 'World': '#ffffff' };
-
-    const traces = entities.map(entity => {
-        const data = store[entity];
-        if (!data) return null;
-        return {
-            x: data.years,
-            y: data.launches,
-            type: 'scatter',
-            mode: 'lines+markers',
-            name: entity,
-            line: { color: colors[entity] || '#888', width: entity === 'World' ? 4 : 2 },
-            marker: { size: 4 },
-            hovertemplate: '<b>%{data.name}</b><br>Year: %{x}<br>Launches: %{y}<extra></extra>'
-        };
-    }).filter(t => t);
-
-    // Animation: Reveal traces
-    const layout = {
-        title: { text: 'THE EXPONENTIAL FRONTIER: CUMULATIVE OBJECTS IN ORBIT', font: { size: 28, color: theme.accent } },
-        paper_bgcolor: 'rgba(0,0,0,0)', plot_bgcolor: 'rgba(0,0,0,0)',
-        font: { color: theme.font, family: 'Roboto' },
-        xaxis: { title: { text: 'Year', font: { size: theme.axisSize + 4 } }, gridcolor: theme.grid, range: [1957, 2025], tickfont: { size: theme.axisSize + 2 } },
-        yaxis: { title: { text: 'Annual Launches', font: { size: theme.axisSize + 4 } }, gridcolor: theme.grid, tickfont: { size: theme.axisSize + 2 } },
-        hovermode: 'closest',
-        hoverlabel: { bgcolor: theme.tooltipBg, font: { color: theme.tooltipText, size: 18 }, bordercolor: '#333' },
-        legend: { orientation: 'h', y: 1.05, font: { size: 16 } },
-        margin: { t: 80, r: 40, b: 80, l: 100 }
-    };
-
-    Plotly.newPlot(container, traces, layout, { ...config, scrollZoom: true });
-}
-
-// Viz 2: Annual Launches by Power (Stacked Bar)
-function renderViz2() {
-    // UPDATED: Business Dashboard Stacked Bar
-    const container = 'chart2';
     Plotly.purge(container);
 
-    const years = store['World'].years;
-    const entities = ['United States', 'Russia', 'China', 'Others'];
+    const entities = ['United States', 'Russia', 'China', 'India', 'World'];
+    const colors = { 'United States': theme.accent, 'Russia': theme.secondary, 'China': '#ffe600', 'India': '#ff9900', 'World': '#fff' };
 
-    // Prepare Data Traces
     const traces = entities.map(e => {
-        let yData;
-        if (e === 'Others') {
-            // Calculate Others (World - Sum of majors)
-            const us = store['United States'];
-            const ru = store['Russia'];
-            const ch = store['China'];
-            const world = store['World'];
-
-            yData = world.years.map((year, i) => {
-                const uVal = (us.years.indexOf(year) !== -1) ? us.launches[us.years.indexOf(year)] : 0;
-                const rVal = (ru.years.indexOf(year) !== -1) ? ru.launches[ru.years.indexOf(year)] : 0;
-                const cVal = (ch.years.indexOf(year) !== -1) ? ch.launches[ch.years.indexOf(year)] : 0;
-                const wVal = world.launches[i];
-                return Math.max(0, wVal - (uVal + rVal + cVal));
-            });
-        } else {
-            const d = store[e];
-            if (!d) return null;
-            // Align to World Years
-            const worldYears = store['World'].years;
-            yData = worldYears.map(year => {
-                const idx = d.years.indexOf(year);
-                return idx !== -1 ? d.launches[idx] : 0;
-            });
-        }
-
+        const d = store[e];
+        if (!d) return null;
         return {
-            x: years,
-            y: yData,
-            name: e,
-            type: 'bar',
-            marker: {
-                color: e === 'United States' ? '#00f2ff' : e === 'Russia' ? '#ff0055' : e === 'China' ? '#ffe600' : '#444'
-            },
-            hovertemplate: '<b>%{data.name}</b><br>Year: %{x}<br>Launches: %{y}<extra></extra>'
+            x: d.years, y: d.launches,
+            name: e.toUpperCase(),
+            type: 'scatter', mode: 'lines',
+            line: { color: colors[e], width: e === 'World' ? 5 : 3, shape: 'spline' },
+            hovertemplate: `<b>${e.toUpperCase()}</b><br>YEAR: %{x}<br>LAUNCHES: %{y}<extra></extra>`
         };
     }).filter(t => t);
 
     const layout = {
-        title: { text: 'LAUNCH DYNAMICS BY GLOBAL SUPERPOWERS', font: { size: 28, color: theme.accent } },
-        barmode: 'stack',
-        paper_bgcolor: 'rgba(0,0,0,0)',
-        plot_bgcolor: 'rgba(0,0,0,0)',
+        title: { text: 'DATA BRIEFING: THE EXPONENTIAL ASCENT OF ORBITAL ASSETS', font: { size: theme.titleSize, color: theme.accent, family: 'Orbitron' }, y: 0.95 },
+        paper_bgcolor: 'rgba(0,0,0,0)', plot_bgcolor: 'rgba(0,0,0,0)',
         font: { color: theme.font, family: 'Roboto' },
-        xaxis: { title: { text: 'Year', font: { size: theme.axisSize + 4 } }, gridcolor: theme.grid, range: [1957, 2025], tickfont: { size: theme.axisSize + 2 } },
-        yaxis: { title: { text: 'Launches', font: { size: theme.axisSize + 4 } }, gridcolor: theme.grid, tickfont: { size: theme.axisSize + 2 } },
+        xaxis: { title: 'OPERATIONAL YEAR', gridcolor: theme.grid, tickfont: { size: theme.axisSize } },
+        yaxis: { title: 'ANNUAL OBJECTS DEPLOYED', gridcolor: theme.grid, tickfont: { size: theme.axisSize } },
+        margin: { t: 100, b: 80, l: 100, r: 50 },
         legend: { orientation: 'h', y: 1.05, font: { size: 16 } },
-        hovermode: 'x unified',
-        hoverlabel: { bgcolor: theme.tooltipBg, font: { color: theme.tooltipText, size: 18 }, bordercolor: '#333' },
-        margin: { l: 100, r: 40, t: 80, b: 80 }
+        hovermode: 'x unified'
     };
 
     Plotly.newPlot(container, traces, layout, config);
 }
 
-function animateViz2() {
-    renderViz2();
+// Viz 2: STRATEGIC OVERVIEW: GLOBAL LAUNCH DYNAMICS BY SUPERPOWERS
+function renderViz2() {
+    const container = 'chart2';
+    Plotly.purge(container);
+
+    const majors = ['United States', 'Russia', 'China'];
+    const world = store['World'];
+    const years = world.years;
+
+    const traces = majors.map(m => {
+        const d = store[m];
+        const yData = years.map(y => {
+            const idx = d.years.indexOf(y);
+            return idx !== -1 ? d.launches[idx] : 0;
+        });
+        return {
+            x: years, y: yData, name: m.toUpperCase(), type: 'bar',
+            marker: { color: m === 'United States' ? theme.accent : m === 'Russia' ? theme.secondary : '#ffe600' }
+        };
+    });
+
+    // Add 'OTHERS'
+    const othersData = years.map((y, i) => {
+        let sum = 0;
+        majors.forEach(m => {
+            const d = store[m];
+            const idx = d.years.indexOf(y);
+            sum += idx !== -1 ? d.launches[idx] : 0;
+        });
+        return Math.max(0, world.launches[i] - sum);
+    });
+    traces.push({ x: years, y: othersData, name: 'OTHERS/EMERGING', type: 'bar', marker: { color: '#444' } });
+
+    const layout = {
+        title: { text: 'STRATEGIC OVERVIEW: GLOBAL LAUNCH DYNAMICS BY SUPERPOWERS', font: { size: theme.titleSize, color: theme.accent, family: 'Orbitron' } },
+        barmode: 'stack',
+        paper_bgcolor: 'rgba(0,0,0,0)', plot_bgcolor: 'rgba(0,0,0,0)',
+        font: { color: theme.font },
+        xaxis: { title: 'FISCAL YEAR', gridcolor: theme.grid },
+        yaxis: { title: 'LAUNCH VOLUME', gridcolor: theme.grid },
+        margin: { t: 100, b: 80, l: 100, r: 50 },
+        legend: { orientation: 'h', y: 1.05 },
+        hovermode: 'x unified'
+    };
+
+    Plotly.newPlot(container, traces, layout, config);
 }
 
-// Viz 3: Global Map (Animated Time-Lapse)
+// Viz 3 (Slide 4): GEOSPATIAL INTELLIGENCE: HISTORICAL LAUNCH FOOTPRINT (1957-2024)
 function renderViz3() {
     const container = 'chart3';
     Plotly.purge(container);
 
     const years = Array.from({ length: 2025 - 1957 + 1 }, (_, i) => 1957 + i);
-    const frames = [];
     const entities = Object.keys(store).filter(e => store[e].code);
-
-    years.forEach(year => {
+    const frames = years.map(year => {
         const locations = [];
         const z = [];
-        const text = [];
         entities.forEach(e => {
-            const data = store[e];
+            const d = store[e];
             let total = 0;
-            // Cumulative up to this year for "Spread" effect
-            for (let i = 0; i < data.years.length; i++) if (data.years[i] <= year) total += data.launches[i];
-
-            if (total > 0) {
-                locations.push(data.code);
-                z.push(total);
-                text.push(e);
-            }
+            for (let i = 0; i < d.years.length; i++) if (d.years[i] <= year) total += d.launches[i];
+            if (total > 0) { locations.push(d.code); z.push(total); }
         });
-        frames.push({
-            name: year.toString(),
-            data: [{ locations, z, text }]
-        });
+        return { name: year.toString(), data: [{ locations, z }] };
     });
 
     const layout = {
-        title: { text: 'GLOBAL LAUNCH FOOTPRINT (TIME-LAPSE 1957-2024)', font: { size: 28, color: '#fff' } },
+        title: { text: 'GEOSPATIAL INTELLIGENCE: HISTORICAL LAUNCH FOOTPRINT (1957-2024)', font: { size: theme.titleSize, color: '#fff', family: 'Orbitron' } },
         paper_bgcolor: 'rgba(0,0,0,0)',
         geo: {
             bgcolor: 'rgba(0,0,0,0)', showframe: false,
-            projection: { type: 'natural earth' },
+            projection: { type: 'natural earth', scale: 1.2 },
             landcolor: '#1a1a1a', coastlinecolor: '#444',
             showocean: true, oceancolor: '#0b0d17',
-            center: { lat: 20, lon: 0 },
-            lataxis: { range: [-60, 90] },
-            lonaxis: { range: [-180, 180] }
+            center: { lat: 20, lon: 0 }
         },
-        font: { color: '#fff' },
         sliders: [{
-            currentvalue: { prefix: 'Year: ', font: { size: 24, color: '#00f2ff' } },
+            currentvalue: { prefix: 'TIMELINE: ', font: { size: 24, color: theme.accent, family: 'Orbitron' } },
             steps: frames.map(f => ({
                 method: 'animate',
-                args: [[f.name], { mode: 'immediate', frame: { duration: 200, redraw: true }, transition: { duration: 100 } }],
+                args: [[f.name], { mode: 'immediate', frame: { duration: 100, redraw: true }, transition: { duration: 50 } }],
                 label: f.name
             })),
             font: { color: '#fff', size: 14 },
-            pad: { t: 40 }
+            pad: { t: 50, b: 50 },
+            len: 0.9, x: 0.05
         }],
-        margin: { t: 80, b: 0, l: 0, r: 0 }
+        margin: { t: 100, b: 0, l: 0, r: 0 }
     };
 
     const initialData = [{
         type: 'choropleth', locations: frames[0].data[0].locations, z: frames[0].data[0].z,
-        colorscale: 'Plasma', zmin: 0, zmax: 2000,
+        colorscale: 'Viridis', zmin: 0, zmax: 2000,
         marker: { line: { color: '#000', width: 0.5 } },
-        colorbar: { title: 'Total', thickness: 15, x: 0.95, len: 0.8 }
+        colorbar: { title: 'CUMULATIVE', thickness: 20, x: 0.95, len: 0.6 }
     }];
 
     Plotly.newPlot(container, initialData, layout, config).then(() => {
         Plotly.addFrames(container, frames);
         setTimeout(() => {
-            Plotly.animate(container, null, {
-                frame: { duration: 200, redraw: true },
-                fromcurrent: true,
-                transition: { duration: 100 }
-            });
+            Plotly.animate(container, null, { frame: { duration: 100, redraw: true }, fromcurrent: true, transition: { duration: 50 } });
         }, 1000);
     });
 }
-function animateViz3() {
-}
 
-// Viz 4: Market Share (Donut Charts - 1980 vs 2024)
+// Viz 4 (Slide 5): GLOBAL PARTICIPATION: THE DEMOCRATIZATION OF OUTER SPACE (PIE)
 function renderViz4() {
     const container = 'chart4';
     Plotly.purge(container);
 
-    function getDataForYear(year) {
-        let us = 0, ru = 0, ch = 0, other = 0;
-        Object.keys(store).forEach(e => {
-            if (e === 'World') return;
-            const d = store[e];
-            const idx = d.years.indexOf(year);
-            const val = idx !== -1 ? d.launches[idx] : 0;
+    // Logic: Count nations with at least 1 launch
+    const entities = Object.keys(store).filter(e => e !== 'World' && store[e].total > 0);
+    const spaceFaring = entities.length;
+    const totalNations = 195; // Standard baseline
+    const nonSpaceFaring = totalNations - spaceFaring;
 
-            if (e === 'United States') us += val;
-            else if (e === 'Russia' || e === 'Soviet Union') ru += val;
-            else if (e === 'China') ch += val;
-            else other += val;
-        });
-        return { values: [us, ru, ch, other], labels: ['USA', 'Russia', 'China', 'Others'] };
-    }
-
-    const d1980 = getDataForYear(1980);
-    const d2024 = getDataForYear(2023);
-
-    const colors = ['#00f2ff', '#ff0055', '#ffe600', '#888'];
-
-    const data = [
-        {
-            type: 'pie', hole: 0.7,
-            values: d1980.values, labels: d1980.labels,
-            marker: { colors: colors },
-            domain: { x: [0, 0.48], y: [0, 1] },
-            name: '1980', hoverinfo: 'label+percent+name',
-            textinfo: 'percent', textposition: 'inside',
-            insidetextfont: { color: 'white', size: 16 }
-        },
-        {
-            type: 'pie', hole: 0.7,
-            values: d2024.values, labels: d2024.labels,
-            marker: { colors: colors },
-            domain: { x: [0.52, 1], y: [0, 1] },
-            name: '2024', hoverinfo: 'label+percent+name',
-            textinfo: 'percent', textposition: 'inside',
-            insidetextfont: { color: 'white', size: 16 }
-        }
-    ];
+    const data = [{
+        values: [spaceFaring, nonSpaceFaring],
+        labels: ['SPACE-FARING NATIONS', 'NON-SPACE-FARING'],
+        type: 'pie',
+        hole: 0.5,
+        marker: { colors: [theme.accent, '#222'] },
+        textinfo: 'value+percent',
+        insidetextfont: { color: '#fff', size: 28, weight: 'bold' },
+        hoverinfo: 'label+value+percent'
+    }];
 
     const layout = {
-        title: { text: 'MARKET SHARE SHIFT: 1980 VS 2023', font: { size: 28, color: '#fff' } },
-        paper_bgcolor: 'rgba(0,0,0,0)', plot_bgcolor: 'rgba(0,0,0,0)',
+        title: { text: 'GLOBAL PARTICIPATION: THE DEMOCRATIZATION OF OUTER SPACE', font: { size: theme.titleSize, color: '#fff', family: 'Orbitron' } },
+        paper_bgcolor: 'rgba(0,0,0,0)',
         font: { color: '#fff' },
-        grid: { rows: 1, columns: 2 },
         showlegend: true,
-        legend: { orientation: 'h', y: -0.1, font: { size: 18 } },
+        legend: { orientation: 'h', y: -0.1, font: { size: 20 } },
         annotations: [
-            { text: '1980', x: 0.24, y: 0.5, font: { size: 40, color: '#fff', weight: 'bold' }, showarrow: false },
-            { text: '2023', x: 0.76, y: 0.5, font: { size: 40, color: '#fff', weight: 'bold' }, showarrow: false }
+            { text: `${Math.round((spaceFaring / totalNations) * 100)}%`, x: 0.5, y: 0.5, font: { size: 60, color: theme.accent, weight: 'bold' }, showarrow: false },
+            { text: 'GLOBAL ACCESS', x: 0.5, y: 0.35, font: { size: 16, color: '#888' }, showarrow: false }
         ],
-        margin: { t: 100, b: 60, l: 40, r: 40 }
+        margin: { t: 120, b: 120, l: 50, r: 50 }
     };
 
     Plotly.newPlot(container, data, layout, config);
 }
 
-// Viz 5: 2024 Hierarchy (TREEMAP - WITH VISIBLE FRAME & HEADER)
+// Viz 5 (Slide 6): HIERARCHICAL ANALYSIS: TOP 25 ACTIVE SPACE NATIONS (2024 UPDATE)
 function renderViz5() {
     const container = 'chart5';
     Plotly.purge(container);
 
     const year = 2023;
-
-    // Root Label & Color Setup
-    const rootLabel = "Global Space Launches";
-    const labels = [rootLabel];
-    const parents = [""];
-    const text = ["Total"];
-
-    let total = 0;
     const ranking = [];
-
-    // 1. Collect Data
     Object.keys(store).forEach(e => {
         if (e === 'World') return;
-        const d = store[e];
-        const idx = d.years.indexOf(year);
-        const val = idx !== -1 ? d.launches[idx] : 0;
+        const idx = store[e].years.indexOf(year);
+        const val = idx !== -1 ? store[e].launches[idx] : 0;
         if (val > 0) ranking.push({ e, val });
     });
-
-    // 2. Filter Top 25
     ranking.sort((a, b) => b.val - a.val);
     const topN = ranking.slice(0, 25);
 
-    // 3. Populate Lists
-    const values = [0]; // Placeholder for root value
-    let childSum = 0;
-
-    topN.forEach(item => {
-        labels.push(item.e);
-        parents.push(rootLabel);
-        values.push(item.val);
-        text.push(`${item.val}`);
-        childSum += item.val;
-    });
-
-    // 4. Force Root Value to match Child Sum (100% Fill)
-    values[0] = childSum;
-    text[0] = `Total: ${childSum}`;
-
     const data = [{
         type: 'treemap',
-        labels: labels,
-        parents: parents,
-        values: values,
-        textinfo: "label+value+percent parent",
-        textposition: "middle center",
-        // Enable Padding so the Root/Parent Frame is Visible behind children
-        tiling: {
-            packing: "squarify",
-            pad: 6 // 6px Visible Padding
-        },
+        labels: topN.map(i => i.e.toUpperCase()),
+        parents: topN.map(() => "ORBITAL HIERARCHY"),
+        values: topN.map(i => i.val),
+        textinfo: "label+value",
         marker: {
-            colors: labels.map(l => {
-                // Ensure Root Block is Purple
-                if (l === rootLabel) return '#8c52ff';
-                // Countries have specific colors
-                if (l === 'United States') return '#00f2ff';
-                if (l === 'China') return '#ffe600';
-                if (l === 'Russia') return '#ff0055';
-                return '#444'; // Others Grey
-            }),
-            line: { width: 1, color: '#111' }
+            colors: topN.map(i => i.e === 'United States' ? theme.accent : i.e === 'China' ? '#ffe600' : i.e === 'Russia' ? theme.secondary : '#444'),
+            line: { width: 2, color: '#111' }
         },
-        // Enable Header/Pathbar (Title Bar for Parent)
-        pathbar: {
-            visible: true,
-            side: 'top',
-            thickness: 30, // Visible header bar height
-            textfont: { size: 16, color: 'white' }
-        },
-        hovertemplate: '<b>%{label}</b><br>Launches: %{value}<br>Share: %{percentParent:.1%}<extra></extra>'
+        pathbar: { visible: true, thickness: 35, textfont: { size: 18 } }
     }];
 
+    // Add root node
+    data[0].labels.unshift("ORBITAL HIERARCHY");
+    data[0].parents.unshift("");
+    data[0].values.unshift(topN.reduce((a, b) => a + b.val, 0));
+
     const layout = {
-        title: { text: 'LAUNCH HIERARCHY: TOP 25 ACTIVE NATIONS (2023)', font: { size: 28, color: theme.accent } },
-        paper_bgcolor: 'rgba(0,0,0,0)', // BACKGROUND IS TRANSPARENT
-        plot_bgcolor: 'rgba(0,0,0,0)',   // PLOT IS TRANSPARENT
-        font: { color: '#fff', family: 'Roboto', size: 16 },
-        margin: { t: 100, l: 20, r: 20, b: 20 },
-        hoverlabel: { bgcolor: theme.tooltipBg, font: { color: theme.tooltipText, size: 18 }, bordercolor: '#333' }
+        title: { text: 'HIERARCHICAL ANALYSIS: TOP 25 ACTIVE SPACE NATIONS (2024 UPDATE)', font: { size: theme.titleSize, color: theme.accent, family: 'Orbitron' } },
+        paper_bgcolor: 'rgba(0,0,0,0)',
+        font: { color: '#fff' },
+        margin: { t: 100, l: 20, r: 20, b: 20 }
     };
 
     Plotly.newPlot(container, data, layout, config);
 }
 
-
-// -- 4. Init --
 document.addEventListener('DOMContentLoaded', () => {
-    if (typeof rawData !== 'undefined') {
-        store = processData(rawData);
-    } else {
-        console.error("No Raw Data");
-    }
+    if (typeof rawData !== 'undefined') store = processData(rawData);
 });

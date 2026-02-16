@@ -59,11 +59,6 @@ window.addEventListener('resize', () => {
 window.onSlideChange = function (index) {
     console.log(`[Script] Slide ${index} Activation`);
 
-    // SYNC CINEMATICS (Rocket/Astronaut visibility)
-    if (window.updateCinematicState) {
-        window.updateCinematicState(index);
-    }
-
     // Trigger specific render logic
     setTimeout(() => {
         switch (index) {

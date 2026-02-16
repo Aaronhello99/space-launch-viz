@@ -96,11 +96,6 @@ function updateSlide() {
         if (indicator) indicator.innerText = `${targetIndex + 1} / ${slides.length}`;
         if (window.onSlideChange) window.onSlideChange(targetIndex);
 
-        // SYNC CINEMATICS (Rocket/Astronaut visibility)
-        if (window.updateCinematicState) {
-            window.updateCinematicState(targetIndex);
-        }
-
     }, delay);
 }
 

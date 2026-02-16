@@ -286,22 +286,22 @@ function renderViz4() {
 
     const data = [
         {
-            type: 'pie', hole: 0.6,
+            type: 'pie', hole: 0.7,
             values: d1980.values, labels: d1980.labels,
             marker: { colors: colors },
-            domain: { column: 0 },
+            domain: { x: [0, 0.48], y: [0, 1] },
             name: '1980', hoverinfo: 'label+percent+name',
-            textinfo: 'label+percent', textposition: 'inside',
-            insidetextfont: { color: 'white' }
+            textinfo: 'percent', textposition: 'inside',
+            insidetextfont: { color: 'white', size: 16 }
         },
         {
-            type: 'pie', hole: 0.6,
+            type: 'pie', hole: 0.7,
             values: d2024.values, labels: d2024.labels,
             marker: { colors: colors },
-            domain: { column: 1 },
+            domain: { x: [0.52, 1], y: [0, 1] },
             name: '2024', hoverinfo: 'label+percent+name',
-            textinfo: 'label+percent', textposition: 'inside',
-            insidetextfont: { color: 'white' }
+            textinfo: 'percent', textposition: 'inside',
+            insidetextfont: { color: 'white', size: 16 }
         }
     ];
 
@@ -311,10 +311,10 @@ function renderViz4() {
         font: { color: '#fff' },
         grid: { rows: 1, columns: 2 },
         showlegend: true,
-        legend: { orientation: 'h', y: -0.15, font: { size: 18 } },
+        legend: { orientation: 'h', y: -0.1, font: { size: 18 } },
         annotations: [
-            { text: '1980', x: 0.22, y: 0.5, font: { size: 32, color: '#fff' }, showarrow: false },
-            { text: '2023', x: 0.78, y: 0.5, font: { size: 32, color: '#fff' }, showarrow: false }
+            { text: '1980', x: 0.24, y: 0.5, font: { size: 40, color: '#fff', weight: 'bold' }, showarrow: false },
+            { text: '2023', x: 0.76, y: 0.5, font: { size: 40, color: '#fff', weight: 'bold' }, showarrow: false }
         ],
         margin: { t: 100, b: 60, l: 40, r: 40 }
     };

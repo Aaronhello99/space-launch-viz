@@ -1,4 +1,4 @@
-// script.js — Full Rewrite: Formal News Broadcast Edition
+// script.js — Formal Analytical Dashboard Edition
 
 // -- 0. Global Setup --
 const config = {
@@ -96,7 +96,7 @@ function renderViz1() {
 
     const layout = {
         title: {
-            text: 'Breaking Down the Numbers: Annual Objects Launched Into Orbit, 1957–2024',
+            text: 'Annual Objects Launched Into Outer Space (1957–2024)',
             font: { size: theme.titleSize, color: '#fff', family: 'Orbitron, sans-serif' },
             y: 0.96, x: 0.5, xanchor: 'center'
         },
@@ -158,7 +158,7 @@ function renderViz2() {
 
     const layout = {
         title: {
-            text: 'The Space Race Continues: How the Superpowers Compare in Launch Volume',
+            text: 'Cumulative Launch Volume by Major Spacefaring Nations',
             font: { size: theme.titleSize, color: '#fff', family: 'Orbitron, sans-serif' },
             y: 0.96, x: 0.5, xanchor: 'center'
         },
@@ -207,7 +207,7 @@ function renderViz3() {
 
     const layout = {
         title: {
-            text: 'Mapping the Final Frontier: Where the World Launches Into Space',
+            text: 'Global Distribution of Space Launch Activity (1957–2024)',
             font: { size: theme.titleSize, color: '#fff', family: 'Orbitron, sans-serif' },
             y: 0.98, x: 0.5, xanchor: 'center'
         },
@@ -215,14 +215,14 @@ function renderViz3() {
         geo: {
             bgcolor: 'rgba(0,0,0,0)',
             showframe: false,
-            projection: { type: 'natural earth', scale: 1.3 },
+            projection: { type: 'natural earth', scale: 1.05 },
             landcolor: '#1a1a2e', coastlinecolor: '#555',
             showocean: true, oceancolor: '#0b0d17',
             showlakes: false,
             showcountries: true, countrycolor: '#333',
-            center: { lat: 15, lon: 10 },
-            lataxis: { range: [-55, 80] },
-            lonaxis: { range: [-170, 180] }
+            center: { lat: 20, lon: 0 },
+            lataxis: { range: [-60, 85] },
+            lonaxis: { range: [-180, 180] }
         },
         sliders: [{
             currentvalue: {
@@ -239,7 +239,7 @@ function renderViz3() {
             len: 0.92, x: 0.04,
             ticklen: 4
         }],
-        margin: { t: 60, b: 10, l: 0, r: 0 }
+        margin: { t: 60, b: 10, l: 10, r: 10 }
     };
 
     const initialData = [{
@@ -279,7 +279,7 @@ function renderViz3() {
 }
 
 // ============================================================
-// VIZ 4 (Slide 5): Large Pie Chart — Country Share of Launches
+// VIZ 4 (Slide 5): Pie Chart — National Share of Orbital Objects
 // ============================================================
 function renderViz4() {
     const container = 'chart4';
@@ -289,16 +289,14 @@ function renderViz4() {
     const countryData = [];
     Object.keys(store).forEach(entity => {
         if (entity === 'World') return;
-        if (!store[entity].code) return; // Skip orgs like ESA, NATO, etc.
+        if (!store[entity].code) return;
         if (store[entity].total > 0) {
             countryData.push({ name: entity, total: store[entity].total });
         }
     });
 
-    // Sort by total descending
     countryData.sort((a, b) => b.total - a.total);
 
-    // Top 10 individually, rest grouped
     const top = countryData.slice(0, 10);
     const rest = countryData.slice(10);
     const restTotal = rest.reduce((sum, c) => sum + c.total, 0);
@@ -306,130 +304,119 @@ function renderViz4() {
     const labels = top.map(c => c.name);
     const values = top.map(c => c.total);
     if (restTotal > 0) {
-        labels.push('All Other Nations (' + rest.length + ')');
+        labels.push('Other (' + rest.length + ')');
         values.push(restTotal);
     }
 
     const grandTotal = values.reduce((a, b) => a + b, 0);
 
-    // Vibrant color palette
     const colors = [
-        theme.accent,    // US
-        theme.secondary, // Russia
-        theme.gold,      // China
-        '#ff9800',       // UK
-        '#4caf50',       // Japan
-        '#9c27b0',       // France
-        '#e91e63',       // India
-        '#03a9f4',       // Germany
-        '#8bc34a',       // South Korea
-        '#ff5722',       // Italy
-        '#607d8b'        // Others
+        theme.accent, theme.secondary, theme.gold,
+        '#ff9800', '#4caf50', '#9c27b0', '#e91e63',
+        '#03a9f4', '#8bc34a', '#ff5722', '#607d8b'
     ];
 
     const data = [{
         values: values,
         labels: labels,
         type: 'pie',
-        hole: 0.45,
+        hole: 0.4,
         marker: {
             colors: colors,
             line: { color: '#0b0d17', width: 2 }
         },
         textinfo: 'label+percent',
-        textposition: 'outside',
-        textfont: { size: 15, color: '#e0e6ed' },
-        insidetextorientation: 'auto',
-        hovertemplate: '<b>%{label}</b><br>Total Objects: %{value:,}<br>Share: %{percent}<extra></extra>',
-        pull: [0.03, 0.03, 0.03, 0, 0, 0, 0, 0, 0, 0, 0],
+        textposition: 'inside',
+        insidetextorientation: 'radial',
+        textfont: { size: 13, color: '#ffffff', family: 'Roboto, sans-serif' },
+        hovertemplate: '<b>%{label}</b><br>Total Objects Launched: %{value:,}<br>Global Share: %{percent}<extra></extra>',
+        pull: [0.02, 0.02, 0.02, 0, 0, 0, 0, 0, 0, 0, 0],
         sort: false
     }];
 
     const layout = {
         title: {
-            text: 'Who Owns the Skies: National Share of All Objects Ever Launched',
+            text: 'National Share of All Objects Launched Into Orbit',
             font: { size: theme.titleSize, color: '#fff', family: 'Orbitron, sans-serif' },
             y: 0.97, x: 0.5, xanchor: 'center'
         },
         paper_bgcolor: theme.bg,
         font: { color: theme.font, family: 'Roboto, sans-serif' },
-        showlegend: true,
-        legend: {
-            orientation: 'v',
-            x: 0.85, y: 0.5,
-            font: { size: 13, color: '#ccc' },
-            bgcolor: 'rgba(0,0,0,0.3)',
-            bordercolor: 'rgba(255,255,255,0.1)',
-            borderwidth: 1
-        },
+        showlegend: false,
         annotations: [{
-            text: `<b>${grandTotal.toLocaleString()}</b><br><span style="font-size:14px;color:#888">Total Objects</span>`,
-            x: 0.42, y: 0.5,
-            font: { size: 36, color: theme.accent, family: 'Orbitron, sans-serif' },
+            text: `<b>${grandTotal.toLocaleString()}</b><br><span style="font-size:13px;color:#888">Total Objects</span>`,
+            x: 0.5, y: 0.5,
+            font: { size: 34, color: theme.accent, family: 'Orbitron, sans-serif' },
             showarrow: false
         }],
-        margin: { t: 70, b: 30, l: 30, r: 150 }
+        margin: { t: 70, b: 30, l: 40, r: 40 }
     };
 
     Plotly.newPlot(container, data, layout, config);
 }
 
 // ============================================================
-// VIZ 5 (Slide 6): Treemap — Top 25 Active Nations (2023)
+// VIZ 5 (Slide 6): Horizontal Bar — Top 15 Nations by Cumulative Launches
 // ============================================================
 function renderViz5() {
     const container = 'chart5';
     Plotly.purge(container);
 
-    const year = 2023;
+    // Aggregate all-time totals per country
     const ranking = [];
     Object.keys(store).forEach(e => {
         if (e === 'World') return;
-        const idx = store[e].years.indexOf(year);
-        const val = idx !== -1 ? store[e].launches[idx] : 0;
-        if (val > 0) ranking.push({ e, val });
+        if (!store[e].code) return;
+        if (store[e].total > 0) ranking.push({ name: e, total: store[e].total });
     });
-    ranking.sort((a, b) => b.val - a.val);
-    const topN = ranking.slice(0, 25);
+    ranking.sort((a, b) => a.total - b.total); // ascending for horizontal bar
+    const topN = ranking.slice(-15); // top 15
 
-    const topColors = {
+    const colorMap = {
         'United States': theme.accent,
         'China': theme.gold,
         'Russia': theme.secondary,
         'United Kingdom': '#4caf50',
         'Japan': '#03a9f4',
         'India': theme.orange,
-        'France': '#9c27b0'
+        'France': '#9c27b0',
+        'Germany': '#03a9f4',
+        'Canada': '#ff5722'
     };
 
     const data = [{
-        type: 'treemap',
-        labels: topN.map(i => i.e),
-        parents: topN.map(() => "2023 Launch Activity"),
-        values: topN.map(i => i.val),
-        textinfo: "label+value",
-        textfont: { size: 16 },
+        type: 'bar',
+        orientation: 'h',
+        y: topN.map(i => i.name),
+        x: topN.map(i => i.total),
+        text: topN.map(i => i.total.toLocaleString()),
+        textposition: 'outside',
+        textfont: { size: 13, color: '#e0e6ed', family: 'Roboto, sans-serif' },
         marker: {
-            colors: topN.map(i => topColors[i.e] || '#37474f'),
-            line: { width: 2, color: '#111' }
+            color: topN.map(i => colorMap[i.name] || '#546e7a'),
+            line: { width: 0.5, color: '#222' }
         },
-        pathbar: { visible: true, thickness: 30, textfont: { size: 16 } }
+        hovertemplate: '<b>%{y}</b><br>Total Objects Launched: %{x:,}<extra></extra>'
     }];
-
-    // Add root node
-    data[0].labels.unshift("2023 Launch Activity");
-    data[0].parents.unshift("");
-    data[0].values.unshift(topN.reduce((a, b) => a + b.val, 0));
 
     const layout = {
         title: {
-            text: 'Inside the Data: Which Nations Dominated Space in 2023',
+            text: 'Cumulative Space Objects Launched by Nation (All Time)',
             font: { size: theme.titleSize, color: '#fff', family: 'Orbitron, sans-serif' },
             y: 0.97, x: 0.5, xanchor: 'center'
         },
         paper_bgcolor: theme.bg,
-        font: { color: '#fff', family: 'Roboto, sans-serif' },
-        margin: { t: 70, l: 10, r: 10, b: 10 }
+        plot_bgcolor: theme.bg,
+        font: { color: '#ccc', family: 'Roboto, sans-serif', size: 13 },
+        xaxis: {
+            title: { text: 'Total Objects Launched', font: { size: theme.axisSize, color: '#aaa' } },
+            gridcolor: theme.grid, tickfont: { size: 12 }, linecolor: '#555'
+        },
+        yaxis: {
+            tickfont: { size: 13 }, linecolor: '#555', automargin: true
+        },
+        margin: { t: 70, b: 60, l: 140, r: 60 },
+        bargap: 0.25
     };
 
     Plotly.newPlot(container, data, layout, config);

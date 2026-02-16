@@ -15,32 +15,32 @@ let isMinimized = false;
 const slideContent = [
     {
         title: "Mission Briefing",
-        text: "Good evening. Welcome to the Orbital Monitor System — a data-driven briefing on humanity's six decades of space launches. Over 15,000 objects have been sent into orbit since 1957. Tonight, we break down the numbers. Initialize the data link to begin.",
+        text: "Welcome to the Orbital Monitor System. This dashboard provides a structured analysis of global space launch activity from 1957 to 2024. All data is sourced from the United Nations Office for Outer Space Affairs. Select 'Initialize Data Link' to proceed.",
         position: 'ufo-pos-default'
     },
     {
-        title: "Breaking Down the Numbers",
-        text: "Our first chart tracks the annual count of objects launched into orbit. Three eras are visible: the Cold War buildup, the 1990s decline after the USSR collapse, and the dramatic commercial surge beginning around 2018 — driven largely by private mega-constellations.",
+        title: "Temporal Analysis",
+        text: "This chart plots the annual count of objects launched into outer space over the past six decades. Notable inflection points include the Cold War peak, the post-Soviet decline in the early 1990s, and the significant acceleration beginning in 2018 driven by commercial constellation deployments.",
         position: 'ufo-pos-right'
     },
     {
-        title: "The Space Race Continues",
-        text: "This stacked bar chart shows how the superpowers compare. Russia dominated through the 1980s. The United States resurged in the 2020s thanks to commercial operators. China's consistent growth since 2015 marks it as the third major player. Watch the grey 'Rest of World' bar grow in recent years.",
+        title: "Comparative Analysis",
+        text: "A stacked bar chart comparing launch volume across four categories: the United States, Russia, China, and all remaining nations combined. The visualization highlights the shift from a US–Russia duopoly to a multipolar landscape with China as a major contributor and the 'Rest of World' segment expanding steadily.",
         position: 'ufo-pos-default'
     },
     {
-        title: "Mapping the Final Frontier",
-        text: "The world map illustrates the global spread of space-faring nations over time. In 1957, only one nation had reached orbit. By 2024, over 80 countries have registered objects in space. Use the slider to watch the map light up decade by decade.",
+        title: "Geospatial Distribution",
+        text: "This choropleth map tracks the cumulative number of objects launched by each nation from 1957 to 2024. Use the timeline slider to observe the progressive expansion of space-faring capabilities from a single nation to over 80 countries with registered orbital objects.",
         position: 'ufo-pos-right'
     },
     {
-        title: "Who Owns the Skies",
-        text: "This pie chart reveals the all-time national share of objects launched into space. The United States and Russia together account for a commanding majority, but China's rapidly growing slice and the expanding 'All Other Nations' segment show that space is becoming a global enterprise.",
+        title: "National Market Share",
+        text: "The proportional breakdown of all objects ever launched into orbit, segmented by nation. The United States accounts for the dominant share, followed by Russia and China. Hover over each segment for detailed figures. The centre annotation displays the aggregate total across all nations.",
         position: 'ufo-pos-default'
     },
     {
-        title: "Inside the Data: 2023",
-        text: "Finally, a treemap of the top 25 nations by launch activity in 2023. The size of each block corresponds to the number of objects launched that year. The visual hierarchy makes it immediately clear who the dominant players are — and how many emerging nations are joining the arena.",
+        title: "Cumulative Rankings",
+        text: "A horizontal bar chart ranking the top 15 nations by total objects launched across all recorded years. This provides a direct comparison of each country's cumulative contribution to orbital activity, sorted from highest to lowest.",
         position: 'ufo-pos-top-left'
     }
 ];

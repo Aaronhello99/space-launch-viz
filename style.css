@@ -262,6 +262,184 @@ h1.glitch {
     opacity: 0.8;
 }
 
+/* -- FILTER UI -- */
+#filter-btn {
+    position: fixed;
+    top: 16px;
+    left: 24px;
+    z-index: 2000;
+    padding: 8px 16px;
+    font-size: 0.75rem;
+    backdrop-filter: blur(8px);
+    background: rgba(8, 10, 18, 0.7);
+    color: var(--accent-color);
+    border: 1px solid var(--accent-color);
+    border-radius: 4px;
+    font-family: 'Orbitron', sans-serif;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+#filter-btn:hover {
+    background: var(--accent-color);
+    color: #000;
+    box-shadow: 0 0 15px var(--accent-glow);
+}
+
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(4px);
+    z-index: 5000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+}
+
+.modal-overlay.active {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.modal-content {
+    background: #0b0f19;
+    width: 90%;
+    max-width: 600px;
+    max-height: 80vh;
+    border: 1px solid var(--accent-color);
+    border-radius: 8px;
+    box-shadow: 0 0 50px rgba(0, 212, 224, 0.15);
+    display: flex;
+    flex-direction: column;
+    padding: 24px;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding-bottom: 15px;
+}
+
+.modal-header h2 {
+    margin: 0;
+    color: var(--accent-color);
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1.2rem;
+    letter-spacing: 2px;
+}
+
+.close-btn {
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    font-size: 2rem;
+    cursor: pointer;
+    line-height: 1;
+}
+
+.close-btn:hover {
+    color: #fff;
+}
+
+.modal-controls {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+#filter-search {
+    flex-grow: 1;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: #fff;
+    padding: 8px 12px;
+    border-radius: 4px;
+    font-family: 'Roboto', sans-serif;
+}
+
+#filter-search:focus {
+    outline: none;
+    border-color: var(--accent-color);
+}
+
+.btn-group {
+    display: flex;
+    gap: 5px;
+}
+
+.small-btn {
+    background: rgba(255, 255, 255, 0.1);
+    border: none;
+    color: var(--text-secondary);
+    padding: 5px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.8rem;
+}
+
+.small-btn:hover {
+    background: rgba(255, 255, 255, 0.2);
+    color: #fff;
+}
+
+.filter-grid {
+    flex-grow: 1;
+    overflow-y: auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 10px;
+    margin-bottom: 20px;
+    padding-right: 5px;
+}
+
+.filter-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(255, 255, 255, 0.03);
+    padding: 8px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.filter-item:hover {
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.filter-item input {
+    accent-color: var(--accent-color);
+    cursor: pointer;
+}
+
+.filter-item label {
+    cursor: pointer;
+    font-size: 0.9rem;
+    color: var(--text-primary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 15px;
+    padding-top: 15px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
 /* -- BUTTONS -- */
 .btn {
     background: transparent;
@@ -290,4 +468,29 @@ h1.glitch {
 .btn.large {
     font-size: 1.2rem;
     padding: 18px 44px;
+}
+
+.btn.primary {
+    background: var(--accent-color);
+    color: #000;
+    padding: 10px 24px;
+    font-size: 0.9rem;
+}
+
+.btn.primary:hover {
+    box-shadow: 0 0 20px var(--accent-glow);
+}
+
+.btn.secondary {
+    border-color: var(--text-secondary);
+    color: var(--text-secondary);
+    padding: 10px 24px;
+    font-size: 0.9rem;
+}
+
+.btn.secondary:hover {
+    border-color: #fff;
+    color: #fff;
+    background: rgba(255, 255, 255, 0.1);
+    box-shadow: none;
 }

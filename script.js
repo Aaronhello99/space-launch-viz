@@ -24,6 +24,7 @@ const theme = {
 
 // -- 1. Data Store & Processing --
 let store = {};
+let activeFilters = new Set(); // Empty Set = Show All (Default)
 
 function processData(data) {
     const processed = {};
@@ -99,7 +100,15 @@ function renderViz1() {
     const container = 'chart1';
     Plotly.purge(container);
 
-    const entities = ['United States', 'Russia', 'China', 'India', 'World'];
+    const allEntities = ['United States', 'Russia', 'China', 'India'];
+    // Filter logic: If activeFilters has items, use those. Otherwise default to major players + World
+    let entities;
+    if (activeFilters.size > 0) {
+        entities = Array.from(activeFilters);
+    } else {
+        entities = [...allEntities, 'World'];
+    }
+
     const colors = {
         'United States': theme.accent,
         'Russia': theme.secondary,
@@ -108,6 +117,9 @@ function renderViz1() {
         'World': '#ffffff'
     };
 
+    // Auto-assign colors for other nations if filtered
+    const getEntityColor = (e) => colors[e] || '#888';
+
     const traces = entities.map(e => {
         const d = store[e];
         if (!d) return null;
@@ -115,7 +127,7 @@ function renderViz1() {
             x: d.years, y: d.launches,
             name: e,
             type: 'scatter', mode: 'lines',
-            line: { color: colors[e], width: e === 'World' ? 4 : 2.5, shape: 'spline' },
+            line: { color: getEntityColor(e), width: e === 'World' ? 4 : 2.5, shape: 'spline' },
             hovertemplate: `<b>${e}</b><br><b>Year: %{x}</b><br><b>Launches: %{y}</b><extra></extra>`
         };
     }).filter(t => t);
@@ -152,7 +164,13 @@ function renderViz2() {
     const container = 'chart2';
     Plotly.purge(container);
 
-    const majors = ['United States', 'Russia', 'China'];
+    let majors;
+    if (activeFilters.size > 0) {
+        majors = Array.from(activeFilters);
+    } else {
+        majors = ['United States', 'Russia', 'China'];
+    }
+
     const world = store['World'];
     if (!world) return;
     const years = world.years;
@@ -164,28 +182,38 @@ function renderViz2() {
             const idx = d.years.indexOf(y);
             return idx !== -1 ? d.launches[idx] : 0;
         });
+
+        // Dynamic color assignment
+        let color = '#555';
+        if (m === 'United States') color = theme.accent;
+        else if (m === 'Russia') color = theme.secondary;
+        else if (m === 'China') color = theme.gold;
+        else color = `hsl(${Math.random() * 360}, 70%, 50%)`; // Random distinctive color for others
+
         return {
             x: years, y: yData, name: m, type: 'bar',
-            marker: { color: m === 'United States' ? theme.accent : m === 'Russia' ? theme.secondary : theme.gold },
+            marker: { color: color },
             hovertemplate: `<b>${m}</b>: <b>%{y}</b><extra></extra>`
         };
     }).filter(t => t);
 
-    // Calculate 'Others'
-    const othersData = years.map((y, i) => {
-        let sum = 0;
-        majors.forEach(m => {
-            const d = store[m];
-            if (!d) return;
-            const idx = d.years.indexOf(y);
-            sum += idx !== -1 ? d.launches[idx] : 0;
+    // Only show "Rest of World" if NO filters are active
+    if (activeFilters.size === 0) {
+        const othersData = years.map((y, i) => {
+            let sum = 0;
+            majors.forEach(m => {
+                const d = store[m];
+                if (!d) return;
+                const idx = d.years.indexOf(y);
+                sum += idx !== -1 ? d.launches[idx] : 0;
+            });
+            return Math.max(0, world.launches[i] - sum);
         });
-        return Math.max(0, world.launches[i] - sum);
-    });
-    traces.push({
-        x: years, y: othersData, name: 'Rest of World', type: 'bar', marker: { color: '#555' },
-        hovertemplate: '<b>Rest of World</b>: <b>%{y}</b><extra></extra>'
-    });
+        traces.push({
+            x: years, y: othersData, name: 'Rest of World', type: 'bar', marker: { color: '#555' },
+            hovertemplate: '<b>Rest of World</b>: <b>%{y}</b><extra></extra>'
+        });
+    }
 
     const layout = {
         title: {
@@ -221,7 +249,12 @@ function renderViz3() {
     Plotly.purge(container);
 
     const years = Array.from({ length: 2025 - 1957 + 1 }, (_, i) => 1957 + i);
-    const entities = Object.keys(store).filter(e => store[e].code);
+    let entities = Object.keys(store).filter(e => store[e].code);
+
+    // Apply Filter
+    if (activeFilters.size > 0) {
+        entities = entities.filter(e => activeFilters.has(e));
+    }
 
     const frames = years.map(year => {
         const locations = [];
@@ -330,15 +363,23 @@ function renderViz4() {
 
     countryData.sort((a, b) => b.total - a.total);
 
-    const top = countryData.slice(0, 10);
-    const rest = countryData.slice(10);
-    const restTotal = rest.reduce((sum, c) => sum + c.total, 0);
+    // Apply Filter
+    if (activeFilters.size > 0) {
+        const filtered = countryData.filter(c => activeFilters.has(c.name));
+        labels = filtered.map(c => c.name);
+        values = filtered.map(c => c.total);
+        // Do NOT add "Others" in filter mode
+    } else {
+        const top = countryData.slice(0, 10);
+        const rest = countryData.slice(10);
+        const restTotal = rest.reduce((sum, c) => sum + c.total, 0);
 
-    const labels = top.map(c => c.name);
-    const values = top.map(c => c.total);
-    if (restTotal > 0) {
-        labels.push('Other (' + rest.length + ')');
-        values.push(restTotal);
+        labels = top.map(c => c.name);
+        values = top.map(c => c.total);
+        if (restTotal > 0) {
+            labels.push('Other (' + rest.length + ')');
+            values.push(restTotal);
+        }
     }
 
     const grandTotal = values.reduce((a, b) => a + b, 0);
@@ -405,7 +446,14 @@ function renderViz5() {
         if (store[e].total > 0) ranking.push({ name: e, total: store[e].total });
     });
     ranking.sort((a, b) => a.total - b.total); // ascending for horizontal bar
-    const topN = ranking.slice(-15); // top 15
+    if (activeFilters.size > 0) {
+        // Show ONLY selected entities, sorted
+        ranking = ranking.filter(r => activeFilters.has(r.name));
+        topN = ranking; // Show all selected
+    } else {
+        // Show Top 15 standard
+        topN = ranking.slice(-15);
+    }
 
     const colorMap = {
         'United States': theme.accent,
@@ -459,5 +507,81 @@ function renderViz5() {
 
 // -- Init --
 document.addEventListener('DOMContentLoaded', () => {
-    if (typeof rawData !== 'undefined') store = processData(rawData);
+    if (typeof rawData !== 'undefined') {
+        store = processData(rawData);
+        initFilterSystem();
+    }
 });
+
+// -- Filter System Logic --
+
+function openFilterModal() {
+    document.getElementById('filter-modal').classList.add('active');
+}
+
+function closeFilterModal() {
+    document.getElementById('filter-modal').classList.remove('active');
+}
+
+function initFilterSystem() {
+    const list = document.getElementById('filter-options');
+    if (!list) return;
+
+    // Get list of all entities with codes (likely countries)
+    // plus others that might be relevant? For now, strictly entities with codes
+    // + 'World' is usually excluded from filtering selection as it's the aggregate
+    const entities = Object.keys(store).filter(e => e !== 'World' && store[e].total > 0).sort();
+
+    list.innerHTML = entities.map(e => `
+        <label class="filter-item">
+            <input type="checkbox" value="${e}" id="chk-${e.replace(/\s+/g, '')}">
+            ${e}
+        </label>
+    `).join('');
+}
+
+function filterCheckboxes() {
+    const term = document.getElementById('filter-search').value.toLowerCase();
+    const items = document.querySelectorAll('.filter-item');
+    items.forEach(item => {
+        const text = item.textContent.trim().toLowerCase();
+        item.style.display = text.includes(term) ? 'flex' : 'none';
+    });
+}
+
+function toggleAllFilters(select) {
+    const checkboxes = document.querySelectorAll('#filter-options input[type="checkbox"]');
+    checkboxes.forEach(cb => {
+        // Only toggle visible ones if searching
+        if (cb.closest('.filter-item').style.display !== 'none') {
+            cb.checked = select;
+        }
+    });
+}
+
+function applyDataFilter() {
+    activeFilters.clear();
+    const checkboxes = document.querySelectorAll('#filter-options input[type="checkbox"]:checked');
+    checkboxes.forEach(cb => activeFilters.add(cb.value));
+
+    // Update visuals
+    const btn = document.getElementById('filter-btn');
+    if (activeFilters.size > 0) {
+        btn.textContent = `FILTER ACTIVE (${activeFilters.size})`;
+        btn.style.background = theme.secondary;
+        btn.style.color = '#fff';
+    } else {
+        btn.textContent = 'FILTER DATA';
+        btn.style.background = '';
+        btn.style.color = '';
+    }
+
+    closeFilterModal();
+
+    // Re-render ALL charts
+    renderViz1();
+    renderViz2();
+    renderViz3();
+    renderViz4();
+    renderViz5();
+}

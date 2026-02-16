@@ -221,7 +221,10 @@ function renderViz3() {
             bgcolor: 'rgba(0,0,0,0)', showframe: false,
             projection: { type: 'natural earth' },
             landcolor: '#1a1a1a', coastlinecolor: '#444',
-            showocean: true, oceancolor: '#0b0d17'
+            showocean: true, oceancolor: '#0b0d17',
+            center: { lat: 20, lon: 0 },
+            lataxis: { range: [-60, 90] },
+            lonaxis: { range: [-180, 180] }
         },
         font: { color: '#fff' },
         sliders: [{
@@ -232,16 +235,16 @@ function renderViz3() {
                 label: f.name
             })),
             font: { color: '#fff', size: 14 },
-            pad: { t: 80 }
+            pad: { t: 40 }
         }],
-        margin: { t: 100, b: 20, l: 20, r: 20 }
+        margin: { t: 80, b: 0, l: 0, r: 0 }
     };
 
     const initialData = [{
         type: 'choropleth', locations: frames[0].data[0].locations, z: frames[0].data[0].z,
         colorscale: 'Plasma', zmin: 0, zmax: 2000,
         marker: { line: { color: '#000', width: 0.5 } },
-        colorbar: { title: 'Total', thickness: 10 }
+        colorbar: { title: 'Total', thickness: 15, x: 0.95, len: 0.8 }
     }];
 
     Plotly.newPlot(container, initialData, layout, config).then(() => {

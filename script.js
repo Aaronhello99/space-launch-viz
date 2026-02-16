@@ -98,15 +98,15 @@ function renderViz1() {
 
     // Animation: Reveal traces
     const layout = {
-        title: '',
+        title: { text: 'THE EXPONENTIAL FRONTIER: CUMULATIVE OBJECTS IN ORBIT', font: { size: 28, color: theme.accent } },
         paper_bgcolor: 'rgba(0,0,0,0)', plot_bgcolor: 'rgba(0,0,0,0)',
         font: { color: theme.font, family: 'Roboto' },
-        xaxis: { title: { text: 'Year', font: { size: theme.axisSize + 2 } }, gridcolor: theme.grid, range: [1957, 2025], tickfont: { size: theme.axisSize } },
-        yaxis: { title: { text: 'Annual Launches', font: { size: theme.axisSize + 2 } }, gridcolor: theme.grid, tickfont: { size: theme.axisSize } },
+        xaxis: { title: { text: 'Year', font: { size: theme.axisSize + 4 } }, gridcolor: theme.grid, range: [1957, 2025], tickfont: { size: theme.axisSize + 2 } },
+        yaxis: { title: { text: 'Annual Launches', font: { size: theme.axisSize + 4 } }, gridcolor: theme.grid, tickfont: { size: theme.axisSize + 2 } },
         hovermode: 'closest',
-        hoverlabel: { bgcolor: theme.tooltipBg, font: { color: theme.tooltipText, size: 16 }, bordercolor: '#333' },
-        legend: { orientation: 'h', y: 1.15, font: { size: 14 } },
-        margin: { t: 40, r: 30, b: 60, l: 80 }
+        hoverlabel: { bgcolor: theme.tooltipBg, font: { color: theme.tooltipText, size: 18 }, bordercolor: '#333' },
+        legend: { orientation: 'h', y: 1.05, font: { size: 16 } },
+        margin: { t: 80, r: 40, b: 80, l: 100 }
     };
 
     Plotly.newPlot(container, traces, layout, { ...config, scrollZoom: true });
@@ -162,17 +162,17 @@ function renderViz2() {
     }).filter(t => t);
 
     const layout = {
-        title: 'Annual Launches by Major Powers',
+        title: { text: 'LAUNCH DYNAMICS BY GLOBAL SUPERPOWERS', font: { size: 28, color: theme.accent } },
         barmode: 'stack',
         paper_bgcolor: 'rgba(0,0,0,0)',
         plot_bgcolor: 'rgba(0,0,0,0)',
         font: { color: theme.font, family: 'Roboto' },
-        xaxis: { title: { text: 'Year', font: { size: theme.axisSize + 2 } }, gridcolor: theme.grid, range: [1957, 2025], tickfont: { size: theme.axisSize } },
-        yaxis: { title: { text: 'Launches', font: { size: theme.axisSize + 2 } }, gridcolor: theme.grid, tickfont: { size: theme.axisSize } },
-        legend: { orientation: 'h', y: 1.15, font: { size: 14 } },
+        xaxis: { title: { text: 'Year', font: { size: theme.axisSize + 4 } }, gridcolor: theme.grid, range: [1957, 2025], tickfont: { size: theme.axisSize + 2 } },
+        yaxis: { title: { text: 'Launches', font: { size: theme.axisSize + 4 } }, gridcolor: theme.grid, tickfont: { size: theme.axisSize + 2 } },
+        legend: { orientation: 'h', y: 1.05, font: { size: 16 } },
         hovermode: 'x unified',
-        hoverlabel: { bgcolor: theme.tooltipBg, font: { color: theme.tooltipText, size: 16 }, bordercolor: '#333' },
-        margin: { l: 80, r: 30, t: 40, b: 60 }
+        hoverlabel: { bgcolor: theme.tooltipBg, font: { color: theme.tooltipText, size: 18 }, bordercolor: '#333' },
+        margin: { l: 100, r: 40, t: 80, b: 80 }
     };
 
     Plotly.newPlot(container, traces, layout, config);
@@ -214,7 +214,7 @@ function renderViz3() {
     });
 
     const layout = {
-        title: 'Global Launch Footprint (Time-Lapse)',
+        title: { text: 'GLOBAL LAUNCH FOOTPRINT (TIME-LAPSE 1957-2024)', font: { size: 28, color: '#fff' } },
         paper_bgcolor: 'rgba(0,0,0,0)',
         geo: {
             bgcolor: 'rgba(0,0,0,0)', showframe: false,
@@ -224,16 +224,16 @@ function renderViz3() {
         },
         font: { color: '#fff' },
         sliders: [{
-            currentvalue: { prefix: 'Year: ', font: { size: 20 } },
+            currentvalue: { prefix: 'Year: ', font: { size: 24, color: '#00f2ff' } },
             steps: frames.map(f => ({
                 method: 'animate',
                 args: [[f.name], { mode: 'immediate', frame: { duration: 200, redraw: true }, transition: { duration: 100 } }],
                 label: f.name
             })),
-            font: { color: '#fff' },
-            pad: { t: 50 }
+            font: { color: '#fff', size: 14 },
+            pad: { t: 80 }
         }],
-        margin: { t: 50, b: 0, l: 0, r: 0 }
+        margin: { t: 100, b: 20, l: 20, r: 20 }
     };
 
     const initialData = [{
@@ -305,16 +305,17 @@ function renderViz4() {
     ];
 
     const layout = {
-        title: 'Market Share Shift: 1980 vs 2023',
+        title: { text: 'MARKET SHARE SHIFT: 1980 VS 2023', font: { size: 28, color: '#fff' } },
         paper_bgcolor: 'rgba(0,0,0,0)', plot_bgcolor: 'rgba(0,0,0,0)',
         font: { color: '#fff' },
         grid: { rows: 1, columns: 2 },
         showlegend: true,
-        legend: { orientation: 'h', y: -0.15, font: { size: 14 } },
+        legend: { orientation: 'h', y: -0.15, font: { size: 18 } },
         annotations: [
-            { text: '1980', x: 0.22, y: 0.5, font: { size: 24, color: '#fff' }, showarrow: false },
-            { text: '2023', x: 0.78, y: 0.5, font: { size: 24, color: '#fff' }, showarrow: false }
-        ]
+            { text: '1980', x: 0.22, y: 0.5, font: { size: 32, color: '#fff' }, showarrow: false },
+            { text: '2023', x: 0.78, y: 0.5, font: { size: 32, color: '#fff' }, showarrow: false }
+        ],
+        margin: { t: 100, b: 60, l: 40, r: 40 }
     };
 
     Plotly.newPlot(container, data, layout, config);
@@ -400,12 +401,12 @@ function renderViz5() {
     }];
 
     const layout = {
-        title: `Launch Hierarchy (Top 25 Active Nations)`,
+        title: { text: 'LAUNCH HIERARCHY: TOP 25 ACTIVE NATIONS (2023)', font: { size: 28, color: theme.accent } },
         paper_bgcolor: 'rgba(0,0,0,0)', // BACKGROUND IS TRANSPARENT
         plot_bgcolor: 'rgba(0,0,0,0)',   // PLOT IS TRANSPARENT
-        font: { color: '#fff', family: 'Roboto', size: 14 },
-        margin: { t: 60, l: 10, r: 10, b: 10 },
-        hoverlabel: { bgcolor: theme.tooltipBg, font: { color: theme.tooltipText, size: 16 }, bordercolor: '#333' }
+        font: { color: '#fff', family: 'Roboto', size: 16 },
+        margin: { t: 100, l: 20, r: 20, b: 20 },
+        hoverlabel: { bgcolor: theme.tooltipBg, font: { color: theme.tooltipText, size: 18 }, bordercolor: '#333' }
     };
 
     Plotly.newPlot(container, data, layout, config);

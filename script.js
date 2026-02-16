@@ -9,6 +9,9 @@ const config = {
 
 const theme = {
     font: '#fff',
+    fontSize: 16,
+    titleSize: 22,
+    axisSize: 14,
     grid: 'rgba(255,255,255,0.1)',
     bg: 'rgba(0,0,0,0)',
     tooltipBg: '#0b0d17',
@@ -103,12 +106,12 @@ function renderViz1() {
         title: '',
         paper_bgcolor: 'rgba(0,0,0,0)', plot_bgcolor: 'rgba(0,0,0,0)',
         font: { color: theme.font, family: 'Roboto' },
-        xaxis: { title: 'Year', gridcolor: theme.grid, range: [1957, 2025] },
-        yaxis: { title: 'Annual Launches', gridcolor: theme.grid },
-        hovermode: 'closest', // Exact point hover
-        hoverlabel: { bgcolor: theme.tooltipBg, font: { color: theme.tooltipText }, bordercolor: '#333' },
-        legend: { orientation: 'h', y: 1.1 },
-        margin: { t: 20, r: 20, b: 50, l: 60 }
+        xaxis: { title: { text: 'Year', font: { size: theme.axisSize + 2 } }, gridcolor: theme.grid, range: [1957, 2025], tickfont: { size: theme.axisSize } },
+        yaxis: { title: { text: 'Annual Launches', font: { size: theme.axisSize + 2 } }, gridcolor: theme.grid, tickfont: { size: theme.axisSize } },
+        hovermode: 'closest',
+        hoverlabel: { bgcolor: theme.tooltipBg, font: { color: theme.tooltipText, size: 16 }, bordercolor: '#333' },
+        legend: { orientation: 'h', y: 1.15, font: { size: 14 } },
+        margin: { t: 40, r: 30, b: 60, l: 80 }
     };
 
     Plotly.newPlot(container, traces, layout, { ...config, scrollZoom: true });
@@ -169,12 +172,12 @@ function renderViz2() {
         paper_bgcolor: 'rgba(0,0,0,0)',
         plot_bgcolor: 'rgba(0,0,0,0)',
         font: { color: theme.font, family: 'Roboto' },
-        xaxis: { title: 'Year', gridcolor: theme.grid, range: [1957, 2025] },
-        yaxis: { title: 'Launches', gridcolor: theme.grid },
-        legend: { orientation: 'h', y: 1.1 },
+        xaxis: { title: { text: 'Year', font: { size: theme.axisSize + 2 } }, gridcolor: theme.grid, range: [1957, 2025], tickfont: { size: theme.axisSize } },
+        yaxis: { title: { text: 'Launches', font: { size: theme.axisSize + 2 } }, gridcolor: theme.grid, tickfont: { size: theme.axisSize } },
+        legend: { orientation: 'h', y: 1.15, font: { size: 14 } },
         hovermode: 'x unified',
-        hoverlabel: { bgcolor: theme.tooltipBg, font: { color: theme.tooltipText }, bordercolor: '#333' },
-        margin: { l: 50, r: 20, t: 30, b: 50 }
+        hoverlabel: { bgcolor: theme.tooltipBg, font: { color: theme.tooltipText, size: 16 }, bordercolor: '#333' },
+        margin: { l: 80, r: 30, t: 40, b: 60 }
     };
 
     Plotly.newPlot(container, traces, layout, config);
@@ -312,10 +315,10 @@ function renderViz4() {
         font: { color: '#fff' },
         grid: { rows: 1, columns: 2 },
         showlegend: true,
-        legend: { orientation: 'h', y: -0.1 },
+        legend: { orientation: 'h', y: -0.15, font: { size: 14 } },
         annotations: [
-            { text: '1980', x: 0.22, y: 0.5, font: { size: 20, color: '#fff' }, showarrow: false },
-            { text: '2023', x: 0.78, y: 0.5, font: { size: 20, color: '#fff' }, showarrow: false }
+            { text: '1980', x: 0.22, y: 0.5, font: { size: 24, color: '#fff' }, showarrow: false },
+            { text: '2023', x: 0.78, y: 0.5, font: { size: 24, color: '#fff' }, showarrow: false }
         ]
     };
 
@@ -405,9 +408,9 @@ function renderViz5() {
         title: `Launch Hierarchy (Top 25 Active Nations)`,
         paper_bgcolor: 'rgba(0,0,0,0)', // BACKGROUND IS TRANSPARENT
         plot_bgcolor: 'rgba(0,0,0,0)',   // PLOT IS TRANSPARENT
-        font: { color: '#fff', family: 'Roboto' },
-        margin: { t: 40, l: 0, r: 0, b: 0 },
-        hoverlabel: { bgcolor: theme.tooltipBg, font: { color: theme.tooltipText }, bordercolor: '#333' }
+        font: { color: '#fff', family: 'Roboto', size: 14 },
+        margin: { t: 60, l: 10, r: 10, b: 10 },
+        hoverlabel: { bgcolor: theme.tooltipBg, font: { color: theme.tooltipText, size: 16 }, bordercolor: '#333' }
     };
 
     Plotly.newPlot(container, data, layout, config);

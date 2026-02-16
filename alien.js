@@ -14,33 +14,33 @@ let isMinimized = false;
 // -- Narrative Content --
 const slideContent = [
     {
-        title: "Introduction",
-        text: "Greetings. I am Aaron. I developed the Orbital Monitor System to provide a comprehensive analysis of human activity in Near-Earth space. This presentation visualizes over six decades of launch data. Please initialize the data link to begin our assessment.",
+        title: "Mission Briefing",
+        text: "Good evening. Welcome to the Orbital Monitor System — a data-driven briefing on humanity's six decades of space launches. Over 15,000 objects have been sent into orbit since 1957. Tonight, we break down the numbers. Initialize the data link to begin.",
         position: 'ufo-pos-default'
     },
     {
-        title: "Temporal Analysis",
-        text: "We begin with a temporal analysis of orbital traffic. The data reveals three distinct epochs: the initial Cold War expansion, a period of stabilization from 1980 to 2010, and the current exponential surge driven by commercial mega-constellations. The verticality of the recent trend line is unprecedented.",
+        title: "Breaking Down the Numbers",
+        text: "Our first chart tracks the annual count of objects launched into orbit. Three eras are visible: the Cold War buildup, the 1990s decline after the USSR collapse, and the dramatic commercial surge beginning around 2018 — driven largely by private mega-constellations.",
         position: 'ufo-pos-right'
     },
     {
-        title: "Entity Tracking",
-        text: "This visualization tracks the cumulative output of major launching entities. Observe the red bar (USSR) dominating the early Space Race. White/Cyan (USA) catches up. But watch the 21st century carefully—China's rapid ascent and the sudden explosion of private American companies radically alter the launch landscape.",
+        title: "The Space Race Continues",
+        text: "This stacked bar chart shows how the superpowers compare. Russia dominated through the 1980s. The United States resurged in the 2020s thanks to commercial operators. China's consistent growth since 2015 marks it as the third major player. Watch the grey 'Rest of World' bar grow in recent years.",
         position: 'ufo-pos-default'
     },
     {
-        title: "Geospatial Spread",
-        text: "Here, we map the global distribution of launch capabilities. In 1957, access to orbit was a duopoly. Today, over 80 nations have registered objects in space. This map illustrates the democratization of orbital access, shifting from a superpower competition to a global enterprise.",
+        title: "Mapping the Final Frontier",
+        text: "The world map illustrates the global spread of space-faring nations over time. In 1957, only one nation had reached orbit. By 2024, over 80 countries have registered objects in space. Use the slider to watch the map light up decade by decade.",
         position: 'ufo-pos-right'
     },
     {
-        title: "Market Dominance",
-        text: "Despite the proliferation of global actors, this market share analysis reveals a counter-intuitive trend. In the 2020s, the United States has recaptured a level of statistical dominance not seen since the Apollo era, largely due to the high-cadence operations of a single commercial provider.",
+        title: "Who Owns the Skies",
+        text: "This pie chart reveals the all-time national share of objects launched into space. The United States and Russia together account for a commanding majority, but China's rapidly growing slice and the expanding 'All Other Nations' segment show that space is becoming a global enterprise.",
         position: 'ufo-pos-default'
     },
     {
-        title: "2024 Hierarchy",
-        text: "Finally, I present the 2024 launch hierarchy using a Treemap. The 'Global Space Launches' block represents the total volume. Within it, you can see the relative scale of the top 25 active nations. Note the massive visual weight of the leading superpowers compared to the long tail of emerging space nations.",
+        title: "Inside the Data: 2023",
+        text: "Finally, a treemap of the top 25 nations by launch activity in 2023. The size of each block corresponds to the number of objects launched that year. The visual hierarchy makes it immediately clear who the dominant players are — and how many emerging nations are joining the arena.",
         position: 'ufo-pos-top-left'
     }
 ];
@@ -126,17 +126,15 @@ function toggleMinimize(forceState = null) {
 
     if (isMinimized) {
         dialogueBox.style.display = 'none';
-        alienAvatar.style.opacity = '0.5';
-        alienAvatar.style.transform = 'scale(0.8)';
+        if (alienAvatar) { alienAvatar.style.opacity = '0.5'; alienAvatar.style.transform = 'scale(0.8)'; }
     } else {
-        dialogueBox.style.display = 'flex'; // Changed to flex for proper layout
-        alienAvatar.style.opacity = '1';
-        alienAvatar.style.transform = 'scale(1)';
+        dialogueBox.style.display = 'flex';
+        if (alienAvatar) { alienAvatar.style.opacity = '1'; alienAvatar.style.transform = 'scale(1)'; }
     }
 }
 
 document.addEventListener('click', (e) => {
-    if (alienAvatar.contains(e.target)) {
+    if (alienAvatar && alienAvatar.contains(e.target)) {
         toggleMinimize();
         return;
     }

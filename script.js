@@ -9,6 +9,7 @@ const config = {
 
 const theme = {
     font: '#fff',
+    accent: '#00f2ff',
     fontSize: 16,
     titleSize: 22,
     axisSize: 14,

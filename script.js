@@ -93,13 +93,13 @@ function renderViz1() {
             name: e,
             type: 'scatter', mode: 'lines',
             line: { color: colors[e], width: e === 'World' ? 4 : 2.5, shape: 'spline' },
-            hovertemplate: `<b>${e}</b><br>Year: %{x}<br>Launches: %{y}<extra></extra>`
+            hovertemplate: `<b>${e}</b><br>Year: <b>%{x}</b><br>Launches: <b>%{y}</b><extra></extra>`
         };
     }).filter(t => t);
 
     const layout = {
         title: {
-            text: 'Annual Objects Launched Into Outer Space (1957–2024)',
+            text: 'Annual Objects Launched Into Outer Space (1957–2025)',
             font: { size: theme.titleSize, color: '#fff', family: 'Orbitron, sans-serif' },
             y: 0.96, x: 0.5, xanchor: 'center'
         },
@@ -107,7 +107,8 @@ function renderViz1() {
         font: { color: theme.font, family: 'Roboto, sans-serif', size: 14 },
         xaxis: {
             title: { text: 'Year', font: { size: theme.axisSize } },
-            gridcolor: theme.grid, tickfont: { size: 13 }, linecolor: '#555'
+            gridcolor: theme.grid, tickfont: { size: 13 }, linecolor: '#555',
+            range: [1957, 2025]
         },
         yaxis: {
             title: { text: 'Annual Objects Deployed', font: { size: theme.axisSize } },
@@ -142,7 +143,8 @@ function renderViz2() {
         });
         return {
             x: years, y: yData, name: m, type: 'bar',
-            marker: { color: m === 'United States' ? theme.accent : m === 'Russia' ? theme.secondary : theme.gold }
+            marker: { color: m === 'United States' ? theme.accent : m === 'Russia' ? theme.secondary : theme.gold },
+            hovertemplate: `<b>${m}</b>: <b>%{y}</b><extra></extra>`
         };
     }).filter(t => t);
 
@@ -157,11 +159,14 @@ function renderViz2() {
         });
         return Math.max(0, world.launches[i] - sum);
     });
-    traces.push({ x: years, y: othersData, name: 'Rest of World', type: 'bar', marker: { color: '#555' } });
+    traces.push({
+        x: years, y: othersData, name: 'Rest of World', type: 'bar', marker: { color: '#555' },
+        hovertemplate: '<b>Rest of World</b>: <b>%{y}</b><extra></extra>'
+    });
 
     const layout = {
         title: {
-            text: 'Cumulative Launch Volume by Major Spacefaring Nations',
+            text: 'Cumulative Launch Volume by Major Spacefaring Nations (1957–2025)',
             font: { size: theme.titleSize, color: '#fff', family: 'Orbitron, sans-serif' },
             y: 0.96, x: 0.5, xanchor: 'center'
         },
@@ -170,7 +175,8 @@ function renderViz2() {
         font: { color: theme.font, family: 'Roboto, sans-serif', size: 14 },
         xaxis: {
             title: { text: 'Year', font: { size: theme.axisSize } },
-            gridcolor: theme.grid, tickfont: { size: 13 }, linecolor: '#555'
+            gridcolor: theme.grid, tickfont: { size: 13 }, linecolor: '#555',
+            range: [1957, 2025]
         },
         yaxis: {
             title: { text: 'Total Launches', font: { size: theme.axisSize } },
@@ -210,7 +216,7 @@ function renderViz3() {
 
     const layout = {
         title: {
-            text: 'Global Distribution of Space Launch Activity (1957–2024)',
+            text: 'Global Distribution of Space Launch Activity (1957–2025)',
             font: { size: theme.titleSize, color: '#fff', family: 'Orbitron, sans-serif' },
             y: 0.98, x: 0.5, xanchor: 'center'
         },

@@ -16,7 +16,7 @@ let isTransitioning = false; // Debounce lock
 const slideContent = [
     {
         title: "Mission Briefing",
-        text: "Welcome to the Orbital Monitor System. This dashboard provides a structured analysis of global space launch activity from 1957 to 2024. All data is sourced from the United Nations Office for Outer Space Affairs. Select 'Initialize Data Link' to proceed.",
+        text: "Welcome to the Orbital Monitor System. This dashboard provides a structured analysis of global space launch activity from 1957 to 2025. All data is sourced from the United Nations Office for Outer Space Affairs. Select 'Initialize Data Link' to proceed.",
         position: 'ufo-pos-default'
     },
     {
@@ -31,7 +31,7 @@ const slideContent = [
     },
     {
         title: "Geospatial Distribution",
-        text: "This choropleth map tracks the cumulative number of objects launched by each nation from 1957 to 2024. Use the timeline slider to observe the progressive expansion of space-faring capabilities from a single nation to over 80 countries with registered orbital objects.",
+        text: "This choropleth map tracks the cumulative number of objects launched by each nation from 1957 to 2025. Use the timeline slider to observe the progressive expansion of space-faring capabilities from a single nation to over 80 countries with registered orbital objects.",
         position: 'ufo-pos-right'
     },
     {

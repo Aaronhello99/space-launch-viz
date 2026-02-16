@@ -93,7 +93,7 @@ function renderViz1() {
             name: e,
             type: 'scatter', mode: 'lines',
             line: { color: colors[e], width: e === 'World' ? 4 : 2.5, shape: 'spline' },
-            hovertemplate: `<b>${e}</b><br>Year: <b>%{x}</b><br>Launches: <b>%{y}</b><extra></extra>`
+            hovertemplate: `<b>${e}</b><br><b>Year: %{x}</b><br><b>Launches: %{y}</b><extra></extra>`
         };
     }).filter(t => t);
 
@@ -271,7 +271,8 @@ function renderViz3() {
             thickness: 18, len: 0.6, x: 0.97,
             tickfont: { color: '#ccc', size: 11 },
             outlinewidth: 0
-        }
+        },
+        hovertemplate: '<b>%{location}</b><br><b>Total Launches: %{z:,}</b><extra></extra>'
     }];
 
     Plotly.newPlot(container, initialData, layout, config).then(() => {

@@ -53,9 +53,32 @@ function processData(data) {
 window.addEventListener('resize', () => {
     ['chart1', 'chart2', 'chart3', 'chart4', 'chart5'].forEach(id => {
         const el = document.getElementById(id);
-        if (el && el.innerHTML !== "") Plotly.Plots.resize(el);
+        if (el && el.innerHTML !== "") {
+            Plotly.Plots.resize(el);
+            // Specific re-render for Pie Chart to update font sizes
+            if (id === 'chart4') renderViz4();
+        }
     });
 });
+
+// Helper for dynamic font sizing
+function getResponsiveSizes(containerId) {
+    const el = document.getElementById(containerId);
+    if (!el) return { center: 42, sub: 16, slice: 14 };
+
+    const width = el.clientWidth;
+    const height = el.clientHeight;
+    const dim = Math.min(width, height);
+
+    // Base sizes on a reference dimension of ~800px
+    const scale = Math.max(0.6, Math.min(1.5, dim / 600));
+
+    return {
+        center: Math.floor(42 * scale),
+        sub: Math.floor(16 * scale),
+        slice: Math.floor(14 * scale)
+    };
+}
 
 window.onSlideChange = function (index) {
     setTimeout(() => {
@@ -326,11 +349,13 @@ function renderViz4() {
         '#03a9f4', '#8bc34a', '#ff5722', '#607d8b'
     ];
 
+    const sizes = getResponsiveSizes(container);
+
     const data = [{
         values: values,
         labels: labels,
         type: 'pie',
-        hole: 0.35,
+        hole: 0.5, // Increased from 0.35
         marker: {
             colors: colors,
             line: { color: '#0b0d17', width: 2 }
@@ -338,7 +363,7 @@ function renderViz4() {
         textinfo: 'label+percent',
         textposition: 'inside',
         insidetextorientation: 'radial',
-        textfont: { size: 14, color: '#ffffff', family: 'Roboto, sans-serif' },
+        textfont: { size: sizes.slice, color: '#ffffff', family: 'Roboto, sans-serif' },
         hovertemplate: '<b>%{label}</b><br>Total Objects Launched: %{value:,}<br>Global Share: %{percent}<extra></extra>',
         pull: [0.02, 0.02, 0.02, 0, 0, 0, 0, 0, 0, 0, 0],
         sort: false
@@ -354,9 +379,9 @@ function renderViz4() {
         font: { color: theme.font, family: 'Roboto, sans-serif' },
         showlegend: false,
         annotations: [{
-            text: `<b>${grandTotal.toLocaleString()}</b><br><span style="font-size:16px;color:#888">Total Objects</span>`,
+            text: `<b>${grandTotal.toLocaleString()}</b><br><span style="font-size:${sizes.sub}px;color:#888">Total Objects</span>`,
             x: 0.5, y: 0.5,
-            font: { size: 42, color: theme.accent, family: 'Orbitron, sans-serif' },
+            font: { size: sizes.center, color: theme.accent, family: 'Orbitron, sans-serif' },
             showarrow: false
         }],
         margin: { t: 70, b: 20, l: 20, r: 20 }

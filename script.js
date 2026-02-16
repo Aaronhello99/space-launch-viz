@@ -405,7 +405,7 @@ function renderViz4() {
         textposition: 'inside',
         insidetextorientation: 'radial',
         textfont: { size: sizes.slice, color: '#ffffff', family: 'Roboto, sans-serif' },
-        hovertemplate: '<b>%{label}</b><br>Total Objects Launched: %{value:,}<br>Global Share: %{percent}<extra></extra>',
+        hovertemplate: '<b>%{label}</b><br><b>Total Objects Launched: %{value:,}</b><br><b>Global Share: %{percent}</b><extra></extra>',
         pull: [0.02, 0.02, 0.02, 0, 0, 0, 0, 0, 0, 0, 0],
         sort: false
     }];
@@ -479,7 +479,7 @@ function renderViz5() {
             color: topN.map(i => colorMap[i.name] || '#546e7a'),
             line: { width: 0.5, color: '#222' }
         },
-        hovertemplate: '<b>%{y}</b><br>Total Objects Launched: %{x:,}<extra></extra>'
+        hovertemplate: '<b>%{y}</b><br><b>Total Objects Launched: %{x:,}</b><extra></extra>'
     }];
 
     const layout = {

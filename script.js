@@ -151,7 +151,8 @@ function renderViz1() {
         },
         margin: { t: 90, b: 70, l: 80, r: 40 },
         legend: { orientation: 'h', y: 1.08, x: 0.5, xanchor: 'center', font: { size: 14 } },
-        hovermode: 'x unified'
+        hovermode: 'x unified',
+        hoverlabel: { bgcolor: 'rgba(255,255,255,0.95)', font: { color: '#000000' } }
     };
 
     Plotly.newPlot(container, traces, layout, config);
@@ -235,7 +236,8 @@ function renderViz2() {
         },
         margin: { t: 90, b: 70, l: 80, r: 40 },
         legend: { orientation: 'h', y: 1.08, x: 0.5, xanchor: 'center', font: { size: 14 } },
-        hovermode: 'x unified'
+        hovermode: 'x unified',
+        hoverlabel: { bgcolor: 'rgba(255,255,255,0.95)', font: { color: '#000000' } }
     };
 
     Plotly.newPlot(container, traces, layout, config);

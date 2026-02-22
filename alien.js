@@ -15,33 +15,33 @@ let isTransitioning = false; // Debounce lock
 // -- Narrative Content --
 const slideContent = [
     {
-        title: "Mission Briefing",
-        text: "Welcome to the Orbital Monitor System. This dashboard provides a structured analysis of global space launch activity from 1957 to 2025. All data is sourced from the United Nations Office for Outer Space Affairs. Select 'Initialize Data Link' to proceed.",
+        title: "Introduction / Initialise",
+        text: "Mission Control is preparing to analyse global space launch data. By connecting to the orbital network, we can investigate how space activity has changed over time. This visualisation explores who is launching rockets, how often missions occur, and what factors are driving the rapid growth of space travel.",
         position: 'ufo-pos-default'
     },
     {
-        title: "Temporal Analysis",
-        text: "This chart plots the annual count of objects launched into outer space over the past six decades. Notable inflection points include the Cold War peak, the post-Soviet decline in the early 1990s, and the significant acceleration beginning in 2018 driven by commercial constellation deployments.",
+        title: "Overall Launch Activity",
+        text: "Early space launches were rare and mostly carried out by government space agencies. Over time, the number of launches gradually increased as technology improved and more countries developed space programs. This shows how space exploration has become more important for communication, research, and global development.",
         position: 'ufo-pos-right'
     },
     {
-        title: "Comparative Analysis",
-        text: "A stacked bar chart comparing launch volume across four categories: the United States, Russia, China, and all remaining nations combined. The visualization highlights the shift from a US–Russia duopoly to a multipolar landscape with China as a major contributor and the 'Rest of World' segment expanding steadily.",
+        title: "Increase Over Time (KEY INSIGHT SLIDE)",
+        text: "The data shows a sharp increase in launches starting around the early 2010s. This rapid growth happened when private companies began launching rockets regularly. These companies introduced new technologies that made space travel faster, cheaper, and more efficient.",
         position: 'ufo-pos-default'
     },
     {
-        title: "Geospatial Distribution",
-        text: "This choropleth map tracks the cumulative number of objects launched by each nation from 1957 to 2025. Use the timeline slider to observe the progressive expansion of space-faring capabilities from a single nation to over 80 countries with registered orbital objects.",
+        title: "Role of Private Companies",
+        text: "Private aerospace companies have transformed the space industry. Companies such as SpaceX developed reusable rockets, which significantly reduced launch costs. This allowed more frequent missions, increasing the total number of global space launches and making space more accessible than ever before.",
         position: 'ufo-pos-right'
     },
     {
-        title: "National Market Share",
-        text: "The proportional breakdown of all objects ever launched into orbit, segmented by nation. The United States accounts for the dominant share, followed by Russia and China. Hover over each segment for detailed figures. The centre annotation displays the aggregate total across all nations.",
+        title: "Global Participation",
+        text: "Space launches now involve many countries and organisations around the world. Both governments and private companies operate launch sites in different regions. This global participation shows how space exploration has become an international and commercial activity rather than being limited to a few nations.",
         position: 'ufo-pos-default'
     },
     {
-        title: "Cumulative Rankings",
-        text: "A horizontal bar chart ranking the top 15 nations by total objects launched across all recorded years. This provides a direct comparison of each country's cumulative contribution to orbital activity, sorted from highest to lowest.",
+        title: "Conclusion / Mission Summary",
+        text: "The data reveals that space launch activity has increased dramatically over time, especially due to the rise of private companies and reusable rocket technology. Space exploration is no longer controlled only by governments, but is now driven by innovation, competition, and global demand, marking a new era in human space activity.",
         position: 'ufo-pos-top-left'
     }
 ];
@@ -95,7 +95,7 @@ function updateSlide() {
 let typeTimeout;
 function animateText(title, text) {
     clearTimeout(typeTimeout);
-    alienTitle.innerText = `[ ${title} ]`;
+    alienTitle.innerText = title;
     alienMessage.innerHTML = "";
     if (isMinimized) toggleMinimize(false);
 
